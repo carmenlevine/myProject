@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {View, StyleSheet, ScrollView, Text, TextInput, Button, Alert, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, ToastAndroid, Text, TouchableOpacity} from 'react-native';
+import {ScrollView, TextInput} from 'react-native-gesture-handler';
 
 class CreateAccount extends Component{
   constructor(props){
@@ -16,8 +17,32 @@ class CreateAccount extends Component{
 }
 
 signUp = () => {
-    console.log(this.state);
-  }
+  //validation needed here
+    return fetch("http://10.0.2.2.3333/api/1.0.0/user", {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(this.state)
+    })
+    .then((response) => {
+      if(response.status == 201){
+        return response.json()
+      }else if(response.status === 400){
+        throw 'Failed validation';
+      }else {
+        throw 'Something went wrong';
+      })
+      .then(async (responseJson) => {
+        console.log("User created with ID: ", responseJson);
+        ToastAndroid.show("Account created", ToastAndroid.SHORT);
+        this.props.navigation.navigate("Login");
+      })
+      .catch((error) => {
+        console.log(error);
+        ToastAndroid.show(error, ToastAndroid.SHORT);
+      })
+    }
 
   render(){
 
@@ -49,7 +74,17 @@ signUp = () => {
           </View>
 
           <View style={styles.formItem}>
-            <Text style={styles.formLabel}>Password</Text>
+            <Text style={styles.formLabel}>Email:</Text>
+            <TextInput
+            placeholder="Enter email..."
+            style={styles.formInput}
+            onChangeText={(email) => this.setState({email})}
+            value={this.state.email}
+            />
+          </View>
+
+          <View style={styles.formItem}>
+            <Text style={styles.formLabel}>Password:</Text>
             <TextInput
             placeholder="Enter password..."
             style={styles.formInput}

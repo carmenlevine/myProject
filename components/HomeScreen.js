@@ -1,24 +1,37 @@
 import React, { Component } from 'react';
 import {View, StyleSheet, ScrollView, Text, TextInput, Button, Alert, TouchableOpacity} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class HomeScreen extends Component{
-  constructor(props){
-    super(props);
-  
 
-  this.state = {
-    email: '',
-    password: ''
+  componentDidMount(){
+    this.unsubscribe = this.props.navigation.addListener('focus',() => {
+      this.checkLoggedIn();
+    });
   }
+
+  componentWillUnmount(){
+    this.unsubscribe();
+  }
+
+  checkLoggedIn = async () => {
+    const value = await AsyncStorage.getItem('@session_token');
+    if (value == null){
+      this.props.navigation.navigate('Login');
+    }
+  };
+
+  constructor(props){
+   super(props);
+
+
+ this.state = {
+   email: '',
+   password: ''
+ }
 }
 
-logIn = () => {
-    console.log(this.state);
-  }
-
   render(){
-
-    const navigation = this.props.navigation;
 
     return(
       <View>
@@ -71,7 +84,7 @@ logIn = () => {
     );
   }
 
-  
+
 }
 
 const styles = StyleSheet.create({
