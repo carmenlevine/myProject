@@ -6,6 +6,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import Home from './components/HomeScreen';
 import CreateAccount from './components/CreateAccount';
+import Login from '.components/Login';
 
 const Stack = createStackNavigator();
 
@@ -14,6 +15,7 @@ class App extends Component{
     return(
       <NavigationContainer>
       <Stack.Navigator>
+      <Stack.Screen name = "Login" component={Login} />
       <Stack.Screen name = "HomeScreen" component={Home} />
       <Stack.Screen name= "CreateAccount" component={CreateAccount} />
     </Stack.Navigator>

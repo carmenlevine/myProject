@@ -5,7 +5,7 @@ import {ScrollView, TextInput} from 'react-native-gesture-handler';
 class CreateAccount extends Component{
   constructor(props){
     super(props);
-  
+
 
   this.state = {
     firstName: '',
@@ -32,8 +32,8 @@ signUp = () => {
         throw 'Failed validation';
       }else {
         throw 'Something went wrong';
-      })
-      .then(async (responseJson) => {
+      }})
+      .then((responseJson) => {
         console.log("User created with ID: ", responseJson);
         ToastAndroid.show("Account created", ToastAndroid.SHORT);
         this.props.navigation.navigate("Login");
@@ -128,9 +128,8 @@ signUp = () => {
 
     );
   }
-
-  
 }
+
 
 const styles = StyleSheet.create({
   title: {
@@ -162,5 +161,6 @@ const styles = StyleSheet.create({
     color:'steelblue'
   }
 })
+
 
 export default CreateAccount
