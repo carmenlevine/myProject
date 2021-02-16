@@ -36,7 +36,7 @@ class LoginPage extends Component {
         .then(async (reponseJson) => {
             console.log(reponseJson);
              await AsyncStorage.setItem('@session_token', reponseJson.token);
-             this.props.navigation.navigate("Home");
+             this.props.navigation.navigate("HomeScreen");
         })
         .catch((error) => {
             console.log(error);

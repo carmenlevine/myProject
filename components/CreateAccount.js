@@ -43,7 +43,6 @@ signUp = () => {
         this.props.navigation.navigate("Login")
       })
       .catch((error) => {
-        console.log("it works");
         console.log((error));
         ToastAndroid.show(JSON.stringify(error), ToastAndroid.SHORT);
       })
@@ -51,9 +50,9 @@ signUp = () => {
 
     //validation
     Emptyfields(){
-      if(this.state.firstName=="" || this.state.lastName=="" || this.state.password=="" || this.state.email=="" || this.state.confirmPass=="")
+      if(this.state.email=="")
       {
-        this.setState({EmptyError:"Please fill in all fields"})
+        this.setState({EmptyError:"Please fill in email fields"})
       } else {
         this.setState({EmptyError:""})
       }
