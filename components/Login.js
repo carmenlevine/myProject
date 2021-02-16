@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
-import {View, Text, TouchableOpacity, ToastAndroid} from 'react-native';
+import {View, Text, TouchableOpacity, ToastAndroid, StyleSheet} from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class Login extends Component {
-
+class LoginPage extends Component {
+ 
     constructor(props){
         super(props);
 
         this.state = {
-            email: "",
+            email: "", 
             password: ""
         }
     }
     
     login = async () => {
 
-        //validation here
 
         return fetch("http://10.0.2.2:3333/api/1.0.0/user/login",{
             method: 'post',
@@ -41,10 +40,20 @@ class Login extends Component {
         })
         .catch((error) => {
             console.log(error);
-            ToastAndroid.show(error.ToastAndroid.SHORT);
+            ToastAndroid.show(JSON.stringify(error).ToastAndroid.SHORT);
         })
         
     }
+
+    //validation
+    Emptyfields(){
+        if(this.state.password=="" || this.state.email=="")
+        {
+          this.setState({EmptyError:"Please fill in all fields"})
+        } else {
+          this.setState({EmptyError:""})
+        }
+      }
 
     render (){
         return(
@@ -64,7 +73,7 @@ class Login extends Component {
             <TextInput
                 placeholder="Enter your password..."
                 onChangeText={(password) => this.setState({password})}
-                value={this.state.email}
+                value={this.state.password}
                 secureTextEntry
                 style={styles.formInput}
             />
@@ -82,7 +91,7 @@ class Login extends Component {
             <View style={styles.formItem}>
             <TouchableOpacity
                 style={styles.formTouch}
-                onPress={() => this.props.navigation.navigate('CreateAccount')}
+                onPress={() => this.props.navigation.navigate("CreateAccount")}
                 >
                     <Text style={styles.formTouchText}>Create an account</Text>
                 </TouchableOpacity>
@@ -125,4 +134,4 @@ const styles = StyleSheet.create({
   })
 
 
-export default Login
+export default LoginPage

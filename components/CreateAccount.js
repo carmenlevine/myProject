@@ -5,43 +5,66 @@ import {ScrollView, TextInput} from 'react-native-gesture-handler';
 class CreateAccount extends Component{
   constructor(props){
     super(props);
-
-
-  this.state = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPass: ''
+    this.state = {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPass: ""
   }
 }
 
 signUp = () => {
-  //validation needed here
-    return fetch("http://10.0.2.2.3333/api/1.0.0/user", {
+    const to_send = {
+      "first_name":this.state.firstName,
+      "last_name":this.state.lastName,
+      "email":this.state.email,
+      "password":this.state.password
+    }
+    return fetch("http://10.0.2.2:3333/api/1.0.0/user", {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(this.state)
+      body: JSON.stringify(to_send)
     })
     .then((response) => {
-      if(response.status == 201){
+      if(response.status === 201){
         return response.json()
       }else if(response.status === 400){
         throw 'Failed validation';
       }else {
         throw 'Something went wrong';
-      }})
+      }
+    })
       .then((responseJson) => {
         console.log("User created with ID: ", responseJson);
         ToastAndroid.show("Account created", ToastAndroid.SHORT);
-        this.props.navigation.navigate("Login");
+        this.props.navigation.navigate("Login")
       })
       .catch((error) => {
-        console.log(error);
-        ToastAndroid.show(error, ToastAndroid.SHORT);
+        console.log("it works");
+        console.log((error));
+        ToastAndroid.show(JSON.stringify(error), ToastAndroid.SHORT);
       })
+    }
+
+    //validation
+    Emptyfields(){
+      if(this.state.firstName=="" || this.state.lastName=="" || this.state.password=="" || this.state.email=="" || this.state.confirmPass=="")
+      {
+        this.setState({EmptyError:"Please fill in all fields"})
+      } else {
+        this.setState({EmptyError:""})
+      }
+    }
+
+    PasswordCheck(){
+      if(this.state.password == this.state.confirmPass){
+        this.setState({PasswordError:""})
+      } else {
+        this.setState({PasswordError:"The passwords do not match"})
+      }
     }
 
   render(){
@@ -97,7 +120,7 @@ signUp = () => {
           <View style={styles.formItem}>
             <Text style={styles.formLabel}>Confirm Password:</Text>
             <TextInput
-              placeholder="enter password..."
+              placeholder="Enter password..."
               style={styles.formInput}
               secureTextEntry
               onChangeText={(confirmPass) => this.setState({confirmPass})}
@@ -117,7 +140,7 @@ signUp = () => {
           <View style={styles.formItem}>
             <TouchableOpacity
             style={styles.formTouch}
-            onPress={()=>this.props.navigation.navigate('HomeScreen')}
+            onPress={()=>this.props.navigation.navigate("Login")}
             >
               <Text style={styles.formTouchText}>Log In</Text>
             </TouchableOpacity>

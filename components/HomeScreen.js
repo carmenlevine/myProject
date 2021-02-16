@@ -17,10 +17,10 @@ class HomeScreen extends Component{
   checkLoggedIn = async () => {
     const value = await AsyncStorage.getItem('@session_token');
     if (value == null){
-      this.props.navigation.navigate('Login');
+      this.props.navigation.navigate("LoginPage");
     }
   };
-}
+
 
   render(){
 
