@@ -2,31 +2,30 @@ import 'react-native-gesture-handler';
 
 import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native'
-import {createStackNavigator} from '@react-navigation/stack';
-import bottomTabNavigator from "./navigation/TabNavigator";
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import Home from './components/HomeScreen';
-import CreateAccount from './components/CreateAccount';
-import Login from './components/Login';
+import HomeScreen from './js/components/HomeScreen';
+import CreateAccountPage from './js/components/CreateAccount';
+import LoginPage from './js/components/Login';
+import AccountPage from './js/screens/AccountPage';
+import ReviewPage from './js/screens/ReviewPage';
 
-const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator();
+const Draw = createDrawerNavigator();
 
 class App extends Component{
   render(){
     return(
       <NavigationContainer>
-      <Stack.Navigator>
-      <Stack.Screen name = "Login" component={Login} />
-      <Stack.Screen name = "HomeScreen" component={Home} />
-      <Stack.Screen name= "CreateAccount" component={CreateAccount} />
-    </Stack.Navigator>
+       <Draw.Navigator>
+          <Draw.Screen name = "Home" component={HomeScreen} />
+          <Draw.Screen name = "Create an account" component={CreateAccountPage} />
+          <Draw.Screen name = "Login" component={LoginPage} />
+          <Draw.Screen name = "My account" component={AccountPage} />
+          <Draw.Screen name = "My Reviews" component={ReviewPage} />
+        </Draw.Navigator>
     </NavigationContainer>
     );
   }
-
-  
-
 }
 
 

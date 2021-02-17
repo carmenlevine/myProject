@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {View, StyleSheet, ToastAndroid, Text, TouchableOpacity} from 'react-native';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
 
-class CreateAccount extends Component{
+class CreateAccountPage extends Component{
   constructor(props){
     super(props);
     this.state = {
@@ -185,4 +185,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default CreateAccount
+export default CreateAccountPage

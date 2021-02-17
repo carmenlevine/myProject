@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
-import {View, StyleSheet, ScrollView, Text, TextInput, Button, Alert, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, ToastAndroid, ScrollView, Text, TextInput, Button, Alert, TouchableOpacity} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FlatList } from 'react-native-gesture-handler';
 
 class HomeScreen extends Component{
 
-  tabNav(){
-    myTab.write();
-  }
 
   constructor(props){
     super(props);
@@ -42,7 +39,7 @@ class HomeScreen extends Component{
                return response.json() 
             }else if(response.status === 401) {
               ToastAndroid.show("Youre not logged in", ToastAndroid.SHORT);
-              this.props.navigation.navigate("LoginPage");
+              this.props.navigation.navigate("Login");
             }else {
                 throw 'Something went wrong';
             }
@@ -62,7 +59,7 @@ class HomeScreen extends Component{
   checkLoggedIn = async () => {
     const value = await AsyncStorage.getItem('@session_token');
     if (value == null){
-      this.props.navigation.navigate("LoginPage");
+      this.props.navigation.navigate("Login");
     }
   };
 

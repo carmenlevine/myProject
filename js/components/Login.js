@@ -16,13 +16,19 @@ class LoginPage extends Component {
     
     login = async () => {
 
+      const to_send = {
+        "first_name":this.state.firstName,
+        "last_name":this.state.lastName,
+        "email":this.state.email,
+        "password":this.state.password
+      }
 
         return fetch("http://10.0.2.2:3333/api/1.0.0/user/login",{
             method: 'post',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(this.state)
+            body: JSON.stringify(to_send)
         })
         .then((response) => {
             if(response.status === 200){
@@ -59,7 +65,8 @@ class LoginPage extends Component {
         return(
             <View>
             <ScrollView>
-            <Text style={styles.formItem}>Log in</Text>
+            <Text style={styles.title}>Log in</Text>
+
             <View style={styles.formItem}>
             <TextInput
             placeholder= "Enter your email..."
