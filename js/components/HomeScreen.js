@@ -121,6 +121,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     flexDirection: "row"
   }
-})
+});
 
 export default HomeScreen
