@@ -5,6 +5,7 @@ import {ScrollView, TextInput} from 'react-native-gesture-handler';
 class CreateAccountPage extends Component{
   constructor(props){
     super(props);
+
     this.state = {
       firstName: "",
       lastName: "",
@@ -15,12 +16,14 @@ class CreateAccountPage extends Component{
 }
 
 signUp = () => {
+
     const to_send = {
       "first_name":this.state.firstName,
       "last_name":this.state.lastName,
       "email":this.state.email,
       "password":this.state.password
     }
+    
     return fetch("http://10.0.2.2:3333/api/1.0.0/user", {
       method: 'post',
       headers: {
@@ -141,7 +144,7 @@ signUp = () => {
             style={styles.formTouch}
             onPress={()=>this.props.navigation.navigate("Login")}
             >
-              <Text style={styles.formTouchText}>Log In</Text>
+              <Text style={styles.formTouchText}>Already have an account?</Text>
             </TouchableOpacity>
           </View>
 

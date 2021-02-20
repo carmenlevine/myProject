@@ -16,6 +16,8 @@ class LoginPage extends Component {
     
     login = async () => {
 
+      const navigation = this.props.navigation;
+
       const to_send = {
         "first_name":this.state.firstName,
         "last_name":this.state.lastName,
@@ -42,7 +44,7 @@ class LoginPage extends Component {
         .then(async (reponseJson) => {
             console.log(reponseJson);
              await AsyncStorage.setItem('@session_token', reponseJson.token);
-             this.props.navigation.navigate("HomeScreen");
+             this.props.navigation.navigate("DrawNavigator");
         })
         .catch((error) => {
             console.log(error);
@@ -62,6 +64,9 @@ class LoginPage extends Component {
       }
 
     render (){
+
+      const navigation = this.props.navigation;
+
         return(
             <View>
             <ScrollView>
@@ -96,13 +101,13 @@ class LoginPage extends Component {
             </View>
 
             <View style={styles.formItem}>
-            <TouchableOpacity
-                style={styles.formTouch}
-                onPress={() => this.props.navigation.navigate("CreateAccount")}
-                >
-                    <Text style={styles.formTouchText}>Create an account</Text>
-                </TouchableOpacity>
-                </View>
+              <TouchableOpacity
+              style={styles.formTouch}
+              onPress={() => this.props.navigation.navigate('CreateAccount')}
+              >
+                <Text style={styles.formTouchText}>Create an account</Text>
+              </TouchableOpacity>
+            </View>
             </ScrollView>
         </View>
         );
