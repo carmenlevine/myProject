@@ -44,7 +44,7 @@ class LoginPage extends Component {
         .then(async (reponseJson) => {
             console.log(reponseJson);
              await AsyncStorage.setItem('@session_token', reponseJson.token);
-             this.props.navigation.navigate("DrawNavigator");
+             this.props.navigation.navigate("tabNav");
         })
         .catch((error) => {
             console.log(error);

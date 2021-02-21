@@ -1,161 +1,108 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { Component } from 'react';
-import {View, StyleSheet, ScrollView, Text, TextInput, Button, Alert, TouchableOpacity, ToastAndroid} from 'react-native';
+import {View, StyleSheet, Text, IconButton} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class AccountPage extends Component {
+class Account extends Component {
     constructor(props){
         super(props);
 
         this.state = {
-            firstName: this.props.route.params.item.firstName,
-            lastName: this.props.route.params.item.lastName,
-            email: this.props.route.params.item.email,
-            password: "",
-            confirmPass: ""
+            isLoading: true,
+            listData: [],
         }
     }
 
-    updateAccount = async () => {
-        const to_send = {
-            "first_name":this.state.firstName,
-            "last_name":this.state.lastName,
-            "email":this.state.email,
-            "password":this.state.password
-          }
+    componentDidMount(){
+        this.unsubscribe = this.props.navigation.addListener('focus', () => {
+            this.loggedIn();
+        });
+        
+        this.getData();
+    }
 
-          const value = await AsyncStorage.getItem('@session_token');
-          const user_id = this.props.route.params.item.user_id;
-          console.log(user_id, value);
+    componentWillUnmount(){
+        this.unsubscribe();
+    }
 
-          return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + user_id, {
-              method: 'patch',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body:JSON.stringify(to_send)
-          })
-          .then((response) => {
-            if(response.status === 201){
-               return response.json() 
-            }else if(response.status === 400) {
-                throw 'Invalid email or password';
-            }else {
+    loggedIn = async () => {
+        const value = await AsyncStorage.getItem('@session_token');
+        if (value == null){
+            this.props.navigation.navigate('Login');
+        }
+    }
+
+    getData = async () => {
+        const id = await AsyncStorage.getItem('@id');
+        const user_id = parseInt(id);
+        const value = await AsyncStorage.getItem('@session_token');
+
+        return fetch('http://10.0.2.2:3333/api/1.o.o/user/' + user_id, {
+            headers: {
+                ID: user_id,
+                'X-Authorization': value,
+            },
+        })
+        .then((response) => {
+            if(response.status === 200){
+                return response.json();
+            } else if (response.status === 401){
+                throw 'You are not logged in';
+                this.props.navigation.navigate('Login');
+            } else {
                 throw 'Something went wrong';
             }
         })
-        .then((responseJson) => {
-            console.log('User account updated');
-            this.props.navigation.navigate('HomeScreen');
+        .then((response) => {
+            this.setState({
+                isLoading: false,
+                listData: response,
+            })
         })
         .catch((error) => {
             console.log(error);
         })
     }
 
-    updateTO (){
-        this.updateAccount();
-        this.props.navigation.navigate('HomeScreen');
-    }
-
     render(){
+        const {email, password} = this.state;
+
         const navigation = this.props.navigation;
-        
-        return(
-            <ScrollView
+
+        if(this.state.isLoading){
+            return(
+                <View style={styles.container}>
+                    <Text style={styles.title}>Loading account...</Text>
+                </View>
+            );
+        } else {
+            return(
+                <ScrollView
             contentContainerStyle={{flex:1, justifyContent:'center'}}
             >
-            <Text style={styles.title}>Update account</Text>
+                    <Text style={styles.title}>Hello {this.state.listData.firstName}</Text>
+                    
+                    <IconButton icon ='account-cog' size={22} onPress={() => this.props.navigation.navigate('EditAccountPage', {
+                        item: this.state.listData
+                    })} />
 
-            <View style ={styles.formItem}>
-            <Text style={styles.formLabel}>First Name:</Text>
-            <TextInput
-            placeholder="Enter first name..."
-            style={styles.formInput}
-            onChangeText={(firstName) => this.setState({firstName})}
-            value={this.state.firstName}
-            />
-          </View>
-
-            <View style={styles.formItem}>
-            <Text style={styles.formLabel}>Last name:</Text>
-            <TextInput
-            placeholder="Enter last name..."
-            style={styles.formInput}
-            onChangeText={(lastName) => this.setState({lastName})}
-            value={this.state.lastName}
-            />
-          </View>
-
-          <View style={styles.formItem}>
-            <Text style={styles.formLabel}>Email:</Text>
-            <TextInput
-            placeholder="Enter email..."
-            style={styles.formInput}
-            onChangeText={(email) => this.setState({email})}
-            value={this.state.email}
-            />
-          </View>
-
-          <View style={styles.formItem}>
-            <Text style={styles.formLabel}>Password:</Text>
-            <TextInput
-            placeholder="Enter password..."
-            style={styles.formInput}
-            secureTextEntry
-            onChangeText={(password) => this.setState({password})}
-            value={this.state.password}
-            />
-          </View>
-
-          <View style={styles.formItem}>
-            <Text style={styles.formLabel}>Confirm Password:</Text>
-            <TextInput
-              placeholder="Enter password..."
-              style={styles.formInput}
-              secureTextEntry
-              onChangeText={(confirmPass) => this.setState({confirmPass})}
-              value={this.state.confirmPass}
-            />
-          </View>
-
-          <View style={styles.formItem}>
-            <TouchableOpacity
-            style={styles.formTouch}
-            onPress={() => this.updateTO()}
-            >
-              <Text style={styles.formTouchText}>Update</Text>
-            </TouchableOpacity>
-          </View>
-            </ScrollView>
-        );
+                </ScrollView>
+            )
+        }
     }
 }
 
 const styles = StyleSheet.create({
+    container: {
+        padding:15,
+        flex: 1,
+        justifyContent: 'center'
+    },
     title: {
-      color:'steelblue',
-      backgroundColor:'lightblue',
-      padding:10,
-      fontSize:25
-    },
-    formItem: {
-      padding:20
-    },
-    formInput: {
-      borderWidth:1,
-      borderColor: 'lightblue',
-      borderRadius:5
-    },
-    formTouch: {
-      backgroundColor:'lightblue',
-      padding:10,
-      alignItems:'center'
-    },
-    formTouchText: {
-      fontSize:20,
-      fontWeight:'bold',
-      color:'steelblue'
+        paddingVertical: 10,
+        textAlign: 'center',
+        fontSize: 28,
+        fontWeight: 'bold'
     }
-  })
+});
 
-export default AccountPage;
+export default Account;
