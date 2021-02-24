@@ -9,8 +9,8 @@ class LoginPage extends Component {
         super(props);
 
         this.state = {
-            email: "", 
-            password: ""
+            email: "carmen@gmail.com", 
+            password: "Hello123"
         }
     }
     
@@ -44,7 +44,7 @@ class LoginPage extends Component {
         .then(async (reponseJson) => {
             console.log(reponseJson);
              await AsyncStorage.setItem('@session_token', reponseJson.token);
-             this.props.navigation.navigate("tabNav");
+             this.props.navigation.navigate("Home");
         })
         .catch((error) => {
             console.log(error);

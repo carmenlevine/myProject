@@ -7,12 +7,16 @@ class EditAccountPage extends Component {
         super(props);
 
         this.state = {
-            firstName: this.props.route.params.item.firstName,
-            lastName: this.props.route.params.item.lastName,
-            email: this.props.route.params.item.email,
-            password: "",
-            confirmPass: ""
+          isLoading: true,
+
+          firstName: this.props.route.params.item.firstName,
+          lastName: this.props.route.params.item.lastName,
+          email: this.props.route.params.item.email,
+          password: "",
+          confirmPass: ""
         }
+        
+        
     }
 
     updateAccount = async () => {
@@ -60,6 +64,13 @@ class EditAccountPage extends Component {
     render(){
         const navigation = this.props.navigation;
         
+        if(this.state.isLoading){
+          return(
+            <View style={styles.container}>
+              <Text style={styles.Loadingtitle}>Loading...</Text>
+            </View>
+          );
+        } else{
         return(
             <ScrollView
             contentContainerStyle={{flex:1, justifyContent:'center'}}
@@ -130,6 +141,7 @@ class EditAccountPage extends Component {
         );
     }
 }
+}
 
 const styles = StyleSheet.create({
     title: {
@@ -155,7 +167,18 @@ const styles = StyleSheet.create({
       fontSize:20,
       fontWeight:'bold',
       color:'steelblue'
-    }
+    },
+    container: {
+      padding:15,
+      flex: 1,
+      justifyContent: 'center'
+  },
+  title: {
+      paddingVertical: 10,
+      textAlign: 'center',
+      fontSize: 28,
+      fontWeight: 'bold'
+  }
   })
 
 export default EditAccountPage;

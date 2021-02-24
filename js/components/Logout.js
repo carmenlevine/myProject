@@ -61,6 +61,13 @@ class LogoutPage extends Component {
     }
 
     render (){
+        if (this.state.isLoading){
+            return(
+                <View style={styles.container}>
+                    <Text style={styles.Loadingtitle}>Loading...</Text>
+                </View>
+            )
+        } else {
         return(
             <View>
                 <Text style={styles.title}>Log out</Text>
@@ -76,6 +83,7 @@ class LogoutPage extends Component {
             </View>
         );
     }
+}
 }
 
 const styles = StyleSheet.create({
@@ -99,6 +107,17 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         color: 'steelblue'
+    },
+    container: {
+        padding:15,
+        flex: 1,
+        justifyContent: 'center'
+    },
+    title: {
+        paddingVertical: 10,
+        textAlign: 'center',
+        fontSize: 28,
+        fontWeight: 'bold'
     }
 })
 

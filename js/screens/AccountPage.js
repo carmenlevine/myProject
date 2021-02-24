@@ -14,7 +14,7 @@ class Account extends Component {
 
     componentDidMount(){
         this.unsubscribe = this.props.navigation.addListener('focus', () => {
-            this.loggedIn();
+            this.checkLoggedIn();
         });
         
         this.getData();
@@ -24,7 +24,7 @@ class Account extends Component {
         this.unsubscribe();
     }
 
-    loggedIn = async () => {
+    checkLoggedIn = async () => {
         const value = await AsyncStorage.getItem('@session_token');
         if (value == null){
             this.props.navigation.navigate('Login');
@@ -71,7 +71,7 @@ class Account extends Component {
         if(this.state.isLoading){
             return(
                 <View style={styles.container}>
-                    <Text style={styles.title}>Loading account...</Text>
+                    <Text style={styles.title}>Loading...</Text>
                 </View>
             );
         } else {
@@ -80,6 +80,10 @@ class Account extends Component {
             contentContainerStyle={{flex:1, justifyContent:'center'}}
             >
                     <Text style={styles.title}>Hello {this.state.listData.firstName}</Text>
+                    <Text style={styles.formText}>First name: {this.state.listData.firstName}</Text>
+                    <Text style={styles.formText}>Surname: {this.state.listData.lastName}</Text>
+                    <Text style={styles.formText}>Email: {this.state.listData.email}</Text>
+                    
                     
                     <IconButton icon ='account-cog' size={22} onPress={() => this.props.navigation.navigate('EditAccountPage', {
                         item: this.state.listData

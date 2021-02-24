@@ -1,28 +1,24 @@
-// import 'react-native-gesture-handler';
+import React, { Component } from 'react';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
-// import React, { Component } from 'react';
-// import { createDrawerNavigator } from '@react-navigation/drawer';
+import HomeScreen from '../components/HomeScreen';
+import AccountPage from '../screens/AccountPage';
+import ReviewPage from '../screens/ReviewPage';
+import LogoutPage from '../components/Logout';
 
-// import HomeScreen from '../components/HomeScreen';
-// import AccountPage from '../screens/AccountPage';
-// import ReviewPage from '../screens/ReviewPage';
-// import LogoutPage from '../components/Logout';
+const Drawer = createDrawerNavigator();
 
-// const Draw = createDrawerNavigator();
+class DrawerNavigator extends Component {
+    render() {
+        return(
+            <Drawer.Navigator>
+                <Drawer.Screen name="Home" component={HomeScreen} />
+                <Drawer.Screen name="Account" component={AccountPage} />
+                <Drawer.Screen name="Reviews" component={ReviewPage} />
+                <Drawer.Screen name="Logout" component={LogoutPage} />
+            </Drawer.Navigator>
+        );
+    }
+}
 
-// class DrawerNavigator extends Component{
-    
-
-//     render() {
-//         return(
-//                 <Draw.Navigator>
-//                     <Draw.Screen name="HomeScreen" component={HomeScreen} />
-//                     <Draw.Screen name="My account" component={AccountPage} />
-//                     <Draw.Screen name="My reviews" component={ReviewPage} />
-//                     <Draw.Screen name="Logout" component={LogoutPage} />
-//                 </Draw.Navigator>
-//         );
-//     }
-// }
-
-// export default DrawerNavigator;
+export default DrawerNavigator;
