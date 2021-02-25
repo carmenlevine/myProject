@@ -3,71 +3,36 @@ import {ToastAndroid, View, Text, TouchableOpacity, StyleSheet} from 'react-nati
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class LogoutPage extends Component {
-    constructor(props){
-        super(props);
-
-        this.state = {
-            isLoading: true
-        }
-        }
-    
-
-    componentDidMount(){
-        this.unsubscribe = this.props.navigation.addListener('focus',() => {
-          this.checkLoggedIn();
-        });
-    }
-
-        componentWillUnmount(){
-            this.unsubscribe();
-          }
-
-    checkLoggedIn = async () => {
-         const value = await AsyncStorage.getItem('@session_token');
-        if (value == null){
-            this.props.navigation.navigate("Login");
-        }
-    };
 
     logout = async () => {
+        let value = await AsyncStorage.getItem('@session_token');
+        await AsyncStorage.removeItem('@session_token');
 
         return fetch("http://10.0.2.2:3333/api/1.0.0/user/logout", {
             method: 'post',
             headers: {
-                'Content-Type': 'application/json'
-            },
+                'Content-Type': 'application/json',
+                'X-Authorization': value,
+            }
         })
         .then((response) => {
             if(response.status === 200){
-                return response.json()
+                this.props.navigation.navigate('Login');
             }else if(response.status === 401){
-                throw 'You are not logged in';
+                ToastAndroid.show('You are not logged in', ToastAndroid.SHORT);
+                this.props.navigation.navigate('Login');
             } else {
                 throw 'Something went wrong';
             }
         })
-        .then(async (responseJson) => {
-            this.setState({
-                isLoading:false
-            });
-            console.log(responseJson);
-            await AsyncStorage.removeItem('@session_token', responseJson.token);
-            this.props.navigation.navigate("Login");
-        })
         .catch((error) => {
             console.log(error);
-            ToastAndroid.show(JSON.stringify(error).ToastAndroid.SHORT);
-        })
+        });
     }
 
     render (){
-        if (this.state.isLoading){
-            return(
-                <View style={styles.container}>
-                    <Text style={styles.Loadingtitle}>Loading...</Text>
-                </View>
-            )
-        } else {
+        const navigation = this.props.navigation;
+
         return(
             <View>
                 <Text style={styles.title}>Log out</Text>
@@ -83,7 +48,6 @@ class LogoutPage extends Component {
             </View>
         );
     }
-}
 }
 
 const styles = StyleSheet.create({
