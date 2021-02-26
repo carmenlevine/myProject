@@ -1,22 +1,22 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { Component } from 'react';
-import {View, StyleSheet, ScrollView, Text, TextInput, Button, Alert, TouchableOpacity, ToastAndroid} from 'react-native';
+import { ScrollView, ToastAndroid, Text, TextInput, StyleSheet, TouchableOpacity, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AirbnbRating } from 'react-native-ratings';
 
-class ReviewPage extends Component {
-    constructor(props){
-        super(props);
+ class EditReview extends Component {
+     constructor(props){
+         super(props);
 
-        this.state = {
+         this.state = {
             overallRating: null,
             priceRating: null,
             qualityRating: null,
             clenlinessRating: null,
             reviewBody: ''
-        }
-    }
+         }
+     }
 
-    componentDidMount(){
+     componentDidMount(){
         this.unsubscribe = this.props.navigation.addListener('focus',() => {
             this.checkLoggedIn();
         });
@@ -33,8 +33,8 @@ class ReviewPage extends Component {
         }
     }
 
-    addReview = async () => {
-        let toSend = {
+    editReview = async () => {
+        let to_send = {
             overallRating: parseInt(this.state.overall_rating),
             priceRating: parseInt(this.state.price_rating),
             qualityRating: parseInt(this.state.quality_rating),
@@ -44,42 +44,37 @@ class ReviewPage extends Component {
 
         const value = await AsyncStorage.getItem('@session_token');
         const locationId = this.props.route.params.location_id;
-        console.log(value, location_id);
+        const reviewId = this.props.route.params.review_id;
 
-        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + locationId + '/review', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Authorization': value,
+        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + locationId + '/review/' + reviewId, {
+            method: 'patch',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-Authorization': value
             },
-            body: JSON.stringify(toSend)
+            body: JSON.stringify(to_send),
         })
         .then((response) => {
-            if (response.status === 201) {
-                return response.json();
-            }else if(response.status === 401){
-                throw 'You must log in first';
+            if (response.status === 200){
+                console.log(response);
             }else {
                 throw 'Something went wrong';
             }
         })
         .then(async () => {
-            console.log('Review created');
+            console.log('Review updated');
             this.props.navigation.navigate('Home');
-            ToastAndroid.show('Review created', ToastAndroid.SHORT);
+            ToastAndroid.show('Review updated successfully', ToastAndroid.SHORT);
         })
         .catch((error) => {
-            console.log((error));
-        });
+            console.log(error);
+        })
     }
 
     render(){
-
-        const navigation = this.props.navigation;
-    
-            return(
-               <ScrollView style={styles.container}>
-                   <Text style={styles.header}>Create a new review</Text>
+        return(
+            <ScrollView style={styles.container}>
+                   <Text style={styles.header}>Update a review</Text>
                    <View style={styles.review}>
                        <Text style={styles.title}>Overall rating</Text>
                        <AirbnbRating
@@ -129,60 +124,70 @@ class ReviewPage extends Component {
 
                    <TouchableOpacity
                    style={styles.formTouch}
-                   onPress={() => {this.addReview()}}
+                   onPress={() => {this.editReview()}}
                    >
-                       <Text style={styles.formTouchText}>Add Review</Text>
+                       <Text style={styles.formTouchText}>Edit Review</Text>
                    </TouchableOpacity>
+
+                   <View style={styles.formItem}>
+                    <TouchableOpacity
+                    style={styles.formCancelTouch}
+                    onPress={() => this.props.navigation.navigate("Home")}
+                    >
+                    <Text style={styles.formCancelText}>Cancel</Text>
+                    </TouchableOpacity>
+                    </View>
                </ScrollView>
-                );
-        }
-        
+        );
     }
 
-const styles = StyleSheet.create({
-    container: { 
+ }
+
+ const styles = StyleSheet.create({
+    formCancelTouch: {
+        backgroundColor: 'red',
+        padding:10,
+        alignItems: 'center'
+      },
+      formCancelText: {
+        fontSize:15,
+        fontWeight: 'bold',
+        color:'black'
+      },
+      title: {
+        color:'steelblue',
+        backgroundColor:'lightblue',
+        padding:10,
+        fontSize:25
+      },
+      formItem: {
+        padding:20
+      },
+      formInput: {
+        borderWidth:1,
+        borderColor: 'lightblue',
+        borderRadius:5
+      },
+      formTouch: {
+        backgroundColor:'lightblue',
+        padding:10,
+        alignItems:'center'
+      },
+      formTouchText: {
+        fontSize:20,
+        fontWeight:'bold',
+        color:'steelblue'
+      },
+      container: {
         padding:15,
-        flex: 1
+        flex: 1,
     },
     title: {
         paddingVertical: 10,
         textAlign: 'center',
-        fontSize: 18,
+        fontSize: 28,
         fontWeight: 'bold'
-    },
-    header: {
-        paddingVertical: 10,
-        textAlign: 'center',
-        fontSize: 26,
-        fontWeight: 'bold'
-    },
-    formLabel: {
-        fontSize:15,
-        color:'steelblue'
-    },
-    review: {
-        flex: 1,
-        flexDirection: 'row',
-        paddingTop: 12
-    },
-    revBody: {
-        borderWidth:1,
-        borderRadius:5,
-        borderColor: 'lightblue'
-    },
-    formTouch: {
-        backgroundColor: 'lightblue',
-        padding:10,
-        alignItems: 'center'
-    },
-    formTouchText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'steelblue'
-    },
-    formItem: {
-        padding:20
     }
-});
+ })
 
-export default ReviewPage;
+ export default EditReview;

@@ -7,49 +7,45 @@ class EditAccountPage extends Component {
         super(props);
 
         this.state = {
-          isLoading: true,
-
-          firstName: this.props.route.params.item.firstName,
-          lastName: this.props.route.params.item.lastName,
-          email: this.props.route.params.item.email,
-          password: "",
-          confirmPass: ""
+          firstName: '',
+          lastName: '',
+          email: '',
+          password: '',
+          confirmPass: ''
         }
-        
-        
     }
 
     updateAccount = async () => {
-        const to_send = {
+        let to_send = {
             "first_name":this.state.firstName,
             "last_name":this.state.lastName,
             "email":this.state.email,
             "password":this.state.password
           }
 
+          const id = await AsyncStorage.getItem('@user_id');
+          const userId = JSON.parse(id);
           const value = await AsyncStorage.getItem('@session_token');
-          const user_id = this.props.route.params.item.user_id;
           console.log(user_id, value);
 
-          return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + user_id, {
+          return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + userId, {
               method: 'patch',
               headers: {
-                  'Content-Type': 'application/json'
+                  'Content-Type': 'application/json',
+                  'X-Authorization': value
               },
               body:JSON.stringify(to_send)
           })
           .then((response) => {
-            if(response.status === 201){
-               return response.json() 
-            }else if(response.status === 400) {
-                throw 'Invalid email or password';
+            if(response.status === 200){
+               ToastAndroid.show('Details updated successfully', ToastAndroid.SHORT);
             }else {
                 throw 'Something went wrong';
             }
         })
         .then((responseJson) => {
             console.log('User account updated');
-            this.props.navigation.navigate('HomeScreen');
+            this.props.navigation.navigate('Home');
         })
         .catch((error) => {
             console.log(error);
@@ -63,18 +59,10 @@ class EditAccountPage extends Component {
 
     render(){
         const navigation = this.props.navigation;
-        
-        if(this.state.isLoading){
-          return(
-            <View style={styles.container}>
-              <Text style={styles.Loadingtitle}>Loading...</Text>
-            </View>
-          );
-        } else{
+
         return(
-            <ScrollView
-            contentContainerStyle={{flex:1, justifyContent:'center'}}
-            >
+          <View style={styles.container}>
+            <ScrollView>
             <Text style={styles.title}>Update account</Text>
 
             <View style ={styles.formItem}>
@@ -137,13 +125,33 @@ class EditAccountPage extends Component {
               <Text style={styles.formTouchText}>Update</Text>
             </TouchableOpacity>
           </View>
+
+          <View style={styles.formItem}>
+            <TouchableOpacity
+            style={styles.formCancelTouch}
+            onPress={() => this.props.navigation.navigate("Account")}
+            >
+              <Text style={styles.formCancelText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
             </ScrollView>
+            </View>
         );
     }
 }
-}
+
 
 const styles = StyleSheet.create({
+    formCancelTouch: {
+      backgroundColor: 'red',
+      padding:10,
+      alignItems: 'center'
+    },
+    formCancelText: {
+      fontSize:15,
+      fontWeight: 'bold',
+      color:'black'
+    },
     title: {
       color:'steelblue',
       backgroundColor:'lightblue',

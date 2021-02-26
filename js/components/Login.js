@@ -9,7 +9,7 @@ class LoginPage extends Component {
         super(props);
 
         this.state = {
-            email: "carmen@gmail.com", 
+            email: "carmenlev@gmail.com", 
             password: "Hello123"
         }
     }
@@ -41,9 +41,11 @@ class LoginPage extends Component {
                 throw 'Something went wrong';
             }
         })
-        .then(async (reponseJson) => {
-            console.log(reponseJson);
-             await AsyncStorage.setItem('@session_token', reponseJson.token);
+        .then(async (responseJson) => {
+            console.log(responseJson);
+             await AsyncStorage.setItem('@session_token', responseJson.token);
+             await AsyncStorage.setItem('@user_id', JSON.stringify(responseJson.id));
+             await AsyncStorage.setItem('@user_info', JSON.stringify(responseJson));
              this.props.navigation.navigate("Home");
         })
         .catch((error) => {

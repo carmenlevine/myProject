@@ -185,7 +185,8 @@ const styles = StyleSheet.create({
     fontWeight:'bold',
     color:'steelblue'
   }
-})
+  
+});
 
 
 export default CreateAccountPage
