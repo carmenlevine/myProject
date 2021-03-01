@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import Account from '../screens/AccountPage';
-import EditAccount from '../screens/EditAccountPage';
+import Account from '../user/AccountPage';
+import EditAccount from '../user/EditAccountPage';
 
 const Stack = createStackNavigator();
 

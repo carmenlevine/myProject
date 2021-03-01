@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import {View, StyleSheet, ScrollView, Text, TextInput, Button, Alert, TouchableOpacity, ToastAndroid} from 'react-native';
 import { AirbnbRating } from 'react-native-ratings';
 
-class ReviewPage extends Component {
+class AddReviewPage extends Component {
     constructor(props){
         super(props);
 
@@ -185,4 +185,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ReviewPage;
+export default AddReviewPage;

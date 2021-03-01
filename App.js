@@ -4,8 +4,8 @@ import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import CreateAccount from './js/components/CreateAccount';
-import Login from "./js/components/Login";
+import CreateAccount from './js/logIn/CreateAccount';
+import Login from "./js/logIn/Login";
 import DrawNav from './js/navigation/DrawNavigator';
 
 const Stack = createStackNavigator();

@@ -34,7 +34,7 @@ class LoginPage extends Component {
         })
         .then((response) => {
             if(response.status === 200){
-               return response.json() 
+               return response.json();
             }else if(response.status === 400) {
                 throw 'Invalid email or password';
             }else {
@@ -44,8 +44,7 @@ class LoginPage extends Component {
         .then(async (responseJson) => {
             console.log(responseJson);
              await AsyncStorage.setItem('@session_token', responseJson.token);
-             await AsyncStorage.setItem('@user_id', JSON.stringify(responseJson.id));
-             await AsyncStorage.setItem('@user_info', JSON.stringify(responseJson));
+             await AsyncStorage.setItem('@id', responseJson.id.toString());
              this.props.navigation.navigate("Home");
         })
         .catch((error) => {
@@ -64,6 +63,10 @@ class LoginPage extends Component {
           this.setState({EmptyError:""})
         }
       }
+
+    validateEmail(){
+      return !this.state.email.includes('@');
+    }
 
     render (){
 
