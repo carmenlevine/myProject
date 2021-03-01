@@ -71,6 +71,50 @@ import { AirbnbRating } from 'react-native-ratings';
         })
     }
 
+    deleteReview = async () => {
+        let to_send = {
+            overallRating: parseInt(this.state.overall_rating),
+            priceRating: parseInt(this.state.price_rating),
+            qualityRating: parseInt(this.state.quality_rating),
+            clenlinessRating: parseInt(this.state.clenliness_rating),
+            reviewBody: this.state.review_body
+        }
+
+        const value = await AsyncStorage.getItem('@session_token');
+        const location_id = this.props.route.params.item.location.location_id;
+        const review_id = this.props.route.params.item.review.review_id;
+
+        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review' + review_id, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Authorization': value
+            },
+            body: JSON.stringify(to_send),
+        })
+        .then((response) => {
+            if(response.status === 200){
+                return response.json();
+            } else if(response.status === 401){
+                throw 'You need to log in first';
+            } else {
+                throw 'Something went wrong';
+            }
+        })
+        .then(async (responseJson) => {
+            console.log(responseJson);
+            ToastAndroid.show('Review deleted', ToastAndroid.SHORT);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    }
+
+    deleteButton() {
+        this.deleteReview();
+        this.props.navigation.navigate('Review');
+    }
+
     render(){
         return(
             <ScrollView style={styles.container}>
@@ -128,6 +172,15 @@ import { AirbnbRating } from 'react-native-ratings';
                    >
                        <Text style={styles.formTouchText}>Edit Review</Text>
                    </TouchableOpacity>
+
+                   <View style={styles.formItem}>
+                        <TouchableOpacity
+                        style={styles.formCancelTouch}
+                        onPress={() => this.deleteReview()}
+                        >
+                            <Text style={styles.formCancelTouchText}>Delete review</Text>
+                        </TouchableOpacity>
+                    </View>
 
                    <View style={styles.formItem}>
                     <TouchableOpacity

@@ -36,17 +36,15 @@ class Review extends Component {
     }
 
     getData = async () => {
-        const id = await AsyncStorage.getItem('id');
-        const user_id = parseInt(id);
+        const location_id = this.props.route.params.location_id;
         const value = await AsyncStorage.getItem('@session_token');
 
-        console.log(id,value);
+        console.log(location_id, value);
 
 
-        return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + user_id, {
+        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id, {
             method: 'get',
             headers: {
-                ID: user_id,
                 'X-Authorization': value,
             }
         })
@@ -75,10 +73,10 @@ class Review extends Component {
         });
     }
 
-    likeReview = async (reviewId) => {
+    likeReview = async (review_id) => {
         const value = await AsyncStorage.getItem('@session_token');
-        const locationId = this.props.route.params.location_id;
-        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + locationId + '/review/' + reviewId + '/like', {
+        const location_id = this.props.route.params.location_id;
+        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id + '/like', {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
@@ -87,10 +85,10 @@ class Review extends Component {
         })
         .then((response) => {
             if(response.status === 200){
-                this.getData()
-                ToastAndroid.show('Review liked', ToastAndroid.SHORT)
-                this.setState({isLiked:true})
-                return response.json()
+                this.setState({ likeReview: true });
+                this.getData();
+                ToastAndroid.show('Review Liked', ToastAndroid.SHORT);
+                return response.json();
             } else if(response.status === 400){
                 throw 'Failed Validation';
             } else {
@@ -102,10 +100,10 @@ class Review extends Component {
         })
     }
 
-    unlikeReview = async (reviewId) => {
+    unlikeReview = async (review_id) => {
         const value = await AsyncStorage.getItem('@session_token');
-        const locationId = this.props.route.params.location_id;
-        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + locationId + '/review/' + reviewId + '/like', {
+        const location_id = this.props.route.params.location_id;
+        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + locatio_id + '/review/' + review_id + '/like', {
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json',
@@ -128,34 +126,7 @@ class Review extends Component {
         })
     }
 
-    deleteReview = async (locationId, reviewId) => {
-        const value = await AsyncStorage.getItem('@session_token');
-
-        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + locationId + '/review' + reviewId, {
-            method: 'delete',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Authorization': value
-            }
-        })
-        .then((response) => {
-            if(response.status === 200){
-                return response.json();
-            } else if(response.status === 401){
-                throw 'You need to log in first';
-            } else {
-                throw 'Something went wrong';
-            }
-        })
-        .then(async () => {
-            this.getData();
-            console.log('Review deleted');
-            ToastAndroid.show('Review deleted', ToastAndroid.SHORT);
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-    }
+    
 
     render(){
         const navigation = this.props.navigation;
@@ -163,7 +134,7 @@ class Review extends Component {
         return(
             <View style={styles.formItem}>
                 <ScrollView>
-                    {/* prints out all reviews from user */}
+                    {/* prints out all reviews from user for a location*/}
                     <Text style={styles.formText}>My Reviews: </Text>
                     <FlatList
                     style={styles.formItem}
@@ -189,15 +160,6 @@ class Review extends Component {
                     )}>
                         <Text style={styles.formTouchText}>Edit review</Text>
                     </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.formItem}>
-                        <TouchableOpacity
-                        style={styles.formCancelTouch}
-                        onPress={() => this.deleteReview()}
-                        >
-                            <Text style={styles.formCancelTouchText}>Delete review</Text>
-                        </TouchableOpacity>
                     </View>
 
                 </ScrollView>
