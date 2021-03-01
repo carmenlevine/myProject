@@ -43,7 +43,7 @@ class Review extends Component {
         console.log(id,value);
 
 
-        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + user_id, {
+        return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + user_id, {
             method: 'get',
             headers: {
                 ID: user_id,
