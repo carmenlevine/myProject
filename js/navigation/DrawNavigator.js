@@ -9,6 +9,7 @@ import Locations from '../locations/Locations';
 import FindLocations from '../locations/FindLocations';
 import EditReview from '../reviews/EditReview';
 import AddReview from '../reviews/AddReviewPage';
+import Reviews from '../reviews/Reviews';
 
 const Drawer = createDrawerNavigator();
 
@@ -21,6 +22,7 @@ class DrawerNavigator extends Component {
                 <Drawer.Screen name="Account" component={Account} />
                 <Drawer.Screen name="Locations" component={Locations} />
                 <Drawer.Screen name="FindLocations" component={FindLocations} />
+                <Drawer.Screen name="Reviews" component={Reviews} />
                 <Drawer.Screen name="EditReview" component={EditReview} />
                 <Drawer.Screen name="AddReview" component={AddReview} />
                 <Drawer.Screen name="Logout" component={LogoutPage} />

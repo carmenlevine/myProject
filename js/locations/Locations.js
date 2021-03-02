@@ -3,9 +3,9 @@ import {View, StyleSheet, Text, TouchableOpacity, ScrollView, LogBox, ToastAndro
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FlatList } from 'react-native-gesture-handler';
 
-LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead.']);
+//LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead.']);
 
-class Review extends Component {
+class Locations extends Component {
     constructor(props){
         super(props);
     
@@ -42,7 +42,7 @@ class Review extends Component {
         console.log(location_id, value);
 
 
-        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id, {
+        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id, {
             method: 'get',
             headers: {
                 'X-Authorization': value,
@@ -85,7 +85,7 @@ class Review extends Component {
         })
         .then((response) => {
             if(response.status === 200){
-                this.setState({ likeReview: true });
+                this.setState({ isLiked: true });
                 this.getData();
                 ToastAndroid.show('Review Liked', ToastAndroid.SHORT);
                 return response.json();
@@ -103,7 +103,7 @@ class Review extends Component {
     unlikeReview = async (review_id) => {
         const value = await AsyncStorage.getItem('@session_token');
         const location_id = this.props.route.params.location_id;
-        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + locatio_id + '/review/' + review_id + '/like', {
+        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id + '/like', {
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json',
@@ -136,9 +136,14 @@ class Review extends Component {
                 <ScrollView>
                     {/* prints out all reviews from user for a location*/}
                     <Text style={styles.formText}>My Reviews: </Text>
+                    <TouchableOpacity 
+                    onPress={() => navigation.navigate('AddReview', {
+                        location_id: this.state.listData.location_id,
+                    })}
+                    />
                     <FlatList
                     style={styles.formItem}
-                    data={this.state.listData.reviews}
+                    data={this.state.listData.location_reviews}
                     renderItem={({item}) => (
                             <View style={styles.container}>
                                 <Text>{item.location.location_name}</Text>
@@ -150,7 +155,7 @@ class Review extends Component {
                                 <Text>{item.review.review_body}</Text>
                             </View>  
                     )}
-                    keyExtractor={(item) => item.review.review_id.toString()}
+                    keyExtractor={(item, index) => item.review_id.toString()}
                     />
                     <View style={styles.formItem}>
                     <TouchableOpacity
@@ -210,4 +215,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Review;
+export default Locations;

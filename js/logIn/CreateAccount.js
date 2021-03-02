@@ -7,21 +7,21 @@ class CreateAccountPage extends Component{
     super(props);
 
     this.state = {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      confirmPass: ""
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPass: ''
   }
 }
 
 signUp = () => {
 
     const to_send = {
-      "first_name":this.state.firstName,
-      "last_name":this.state.lastName,
-      "email":this.state.email,
-      "password":this.state.password
+      first_name:this.state.firstName,
+      last_name:this.state.lastName,
+      email:this.state.email,
+      password:this.state.password
     }
     
     return fetch("http://10.0.2.2:3333/api/1.0.0/user", {
@@ -33,7 +33,7 @@ signUp = () => {
     })
     .then((response) => {
       if(response.status === 201){
-        return response.json()
+        return response.json();
       }else if(response.status === 400){
         throw 'Failed validation';
       }else {

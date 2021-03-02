@@ -1,5 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { Component } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {View, StyleSheet, ScrollView, Text, TextInput, Button, Alert, TouchableOpacity, ToastAndroid} from 'react-native';
 
 class EditAccountPage extends Component {
@@ -7,9 +7,9 @@ class EditAccountPage extends Component {
         super(props);
 
         this.state = {
-          firstName: '',
-          lastName: '',
-          email: '',
+          firstName: this.props.route.params.item.first_name,
+          lastName: this.props.route.params.item.last_name,
+          email: this.props.route.params.item.email,
           password: '',
           confirmPass: ''
         }
@@ -17,41 +17,42 @@ class EditAccountPage extends Component {
 
     updateAccount = async () => {
         const to_send = {
-            "first_name":this.state.firstName,
-            "last_name":this.state.lastName,
-            "email":this.state.email,
-            "password":this.state.password
+            first_name: this.state.firstName,
+            last_name: this.state.lastName,
+            email: this.state.email,
+            password: this.state.password
           }
 
           const id = await AsyncStorage.getItem('@id');
           const user_id = parseInt(id);
           const value = await AsyncStorage.getItem('@session_token');
-          console.log(user_id, value);
+          console.log(user_id, value, to_send);
 
-          return fetch("http://10.0.2.2:3333/api/1.0.0/user" + user_id, {
-              method: 'patch',
+          return fetch("http://10.0.2.2:3333/api/1.0.0/user/" + user_id, {
+            
+              method: 'patch', 
               headers: {
-                  ID: user_id,
+                  'Content-Type': 'application/json',
                   'X-Authorization': value
               },
               body:JSON.stringify(to_send)
           })
           .then((response) => {
-            if(response.status === 200){
-               ToastAndroid.show('Details updated successfully', ToastAndroid.SHORT);
-               return response.json();
-              }else if (response.status === 404){
-              throw 'Not found';
-            } else if (response.status === 500){
-              throw 'Server error';
-            } else {
-              throw 'Something else';
+            if (response.status === 200){
+              console.log('User account updated');
+              ToastAndroid.show('User account updated', ToastAndroid.SHORT);
+              this.props.navigation.navigate('Account');
             }
-        })
-        .then((responseJson) => {
-            console.log('User account updated');
-            ToastAndroid.show('User account updated', ToastAndroid.SHORT);
-            this.props.navigation.navigate('Account');
+            else if (response.status === 401){
+                ToastAndroid.show('You are not logged in', ToastAndroid.SHORT);
+                this.props.navigation.navigate('Login');
+            } else if(response.status === 404) {
+                throw 'Not found';
+            } else if(response.status === 500){
+                throw 'Server error';
+            } else {
+                throw 'Something else';
+            }
         })
         .catch((error) => {
             console.log(error);
@@ -88,7 +89,7 @@ class EditAccountPage extends Component {
             <TextInput
             placeholder="Enter first name..."
             style={styles.formInput}
-            onChangeText={(firstName) => this.setState({firstName})}
+            onChangeText={(firstName) => this.setState({ firstName })}
             value={this.state.firstName}
             />
           </View>
@@ -98,7 +99,7 @@ class EditAccountPage extends Component {
             <TextInput
             placeholder="Enter last name..."
             style={styles.formInput}
-            onChangeText={(lastName) => this.setState({lastName})}
+            onChangeText={(lastName) => this.setState({ lastName })}
             value={this.state.lastName}
             />
           </View>
@@ -108,7 +109,7 @@ class EditAccountPage extends Component {
             <TextInput
             placeholder="Enter email..."
             style={styles.formInput}
-            onChangeText={(email) => this.setState({email})}
+            onChangeText={(email) => this.setState({ email })}
             value={this.state.email}
             />
           </View>
@@ -119,7 +120,7 @@ class EditAccountPage extends Component {
             placeholder="Enter password..."
             style={styles.formInput}
             secureTextEntry
-            onChangeText={(password) => this.setState({password})}
+            onChangeText={(password) => this.setState({ password })}
             value={this.state.password}
             />
           </View>
@@ -130,7 +131,7 @@ class EditAccountPage extends Component {
               placeholder="Enter password..."
               style={styles.formInput}
               secureTextEntry
-              onChangeText={(confirmPass) => this.setState({confirmPass})}
+              onChangeText={(confirmPass) => this.setState({ confirmPass })}
               value={this.state.confirmPass}
             />
           </View>

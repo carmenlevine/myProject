@@ -37,9 +37,9 @@ class FindLocation extends Component {
         }
 
         searchData = async () => {
-            const { location_id } = this.props.route.params;
+            // const { location_id } = this.props.route.params;
             let value = await AsyncStorage.getItem('@session_token');
-            return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id, {
+            return fetch("http://10.0.2.2:3333/api/1.0.0/find?", {
                 method: 'get',
                 headers: {
                     'X-Authorization': value

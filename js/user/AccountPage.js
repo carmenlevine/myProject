@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {View, StyleSheet, Text, TouchableOpacity, ScrollView, ToastAndroid, LogBox} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TextInput } from 'react-native-gesture-handler';
 
 class Account extends Component {
     constructor(props){
@@ -16,8 +17,7 @@ class Account extends Component {
         this.unsubscribe = this.props.navigation.addListener('focus', () => {
             this.checkLoggedIn();
         });
-            this.getData();
-       
+        this.getData();
     }
 
     componentWillUnmount(){
@@ -26,10 +26,11 @@ class Account extends Component {
 
     checkLoggedIn = async () => {
         const value = await AsyncStorage.getItem('@session_token');
-        if (value == null){
+        if (value === null){
             this.props.navigation.navigate('Login');
         }
     }
+
 
     getData = async () => {
         const id = await AsyncStorage.getItem('@id');
@@ -60,10 +61,10 @@ class Account extends Component {
             }
         })
         .then((responseJson) => {
-            this.setState({
-                isLoading: false,
-                listData: responseJson,
-            });
+                this.setState({
+                    isLoading: false,
+                    listData: responseJson,
+                });
         })
         .catch((error) => {
             console.log(error);
@@ -71,7 +72,6 @@ class Account extends Component {
     }
 
     render(){
-        const navigation = this.props.navigation;
 
             return(
                 <View style={styles.formItem}>
@@ -85,11 +85,15 @@ class Account extends Component {
                     <View style={styles.formItem}>
                         <TouchableOpacity
                         style={styles.formTouch}
-                        onPress={() => this.props.navigation.navigate('EditAccount')}
+                        onPress={() => this.props.navigation.navigate('EditAccount', {
+                            item: this.state.listData
+                        })}
                         >
-                            <Text style={styles.formTouchText}>Edit account</Text>
+                            <Text style={styles.formTouchText}>Update account</Text>
                         </TouchableOpacity>
                     </View>
+
+                    
 
                 </ScrollView>
                </View>
@@ -114,7 +118,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold'
     },
-    formText: { 
+    inputText: { 
         fontSize: 18,
         textAlign:'left'
     },

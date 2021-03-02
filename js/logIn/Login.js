@@ -9,14 +9,12 @@ class LoginPage extends Component {
         super(props);
 
         this.state = {
-            email: "carmenlev@gmail.com", 
+            email: "bob@gmail.com", 
             password: "Hello123"
         }
     }
-    
-    login = async () => {
 
-      const navigation = this.props.navigation;
+    login = async () => {
 
       const to_send = {
         "first_name":this.state.firstName,
@@ -30,7 +28,7 @@ class LoginPage extends Component {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(to_send)
+            body: JSON.stringify(to_send),
         })
         .then((response) => {
             if(response.status === 200){
@@ -69,7 +67,6 @@ class LoginPage extends Component {
     // }
 
     render (){
-
       const navigation = this.props.navigation;
 
         return(

@@ -1,10 +1,10 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { Component } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {View, StyleSheet, ScrollView, Text, TextInput, Button, Alert, TouchableOpacity, ToastAndroid} from 'react-native';
 import { AirbnbRating } from 'react-native-ratings';
 
 class AddReviewPage extends Component {
-    constructor(props){
+    constructor(props){ 
         super(props);
 
         this.state = {
@@ -16,47 +16,48 @@ class AddReviewPage extends Component {
         }
     }
 
-    componentDidMount(){
-        this.unsubscribe = this.props.navigation.addListener('focus',() => {
-            this.checkLoggedIn();
-        });
-    }
+    // componentDidMount(){
+    //     this.unsubscribe = this.props.navigation.addListener('focus',() => {
+    //         this.checkLoggedIn();
+    //     });
+    // }
 
-    componentWillUnmount(){
-        this.unsubscribe();
-    }
+    // componentWillUnmount(){
+    //     this.unsubscribe();
+    // }
 
-    checkLoggedIn = async () => {
-        const value = await AsyncStorage.getItem('@session_token');
-        if (value == null){
-            this.props.navigation.navigate("Login");
-        }
-    }
+    // checkLoggedIn = async () => {
+    //     const value = await AsyncStorage.getItem('@session_token');
+    //     if (value == null){
+    //         this.props.navigation.navigate("Login");
+    //     }
+    // }
 
     addReview = async () => {
-        let toSend = {
-            overallRating: parseInt(this.state.overall_rating),
-            priceRating: parseInt(this.state.price_rating),
-            qualityRating: parseInt(this.state.quality_rating),
-            clenlinessRating: parseInt(this.state.clenliness_rating),
-            reviewBody: this.state.review_body
+        const toSend = {
+            overall_rating: parseInt(this.state.overallRating),
+            price_rating: parseInt(this.state.priceRating),
+            quality_rating: parseInt(this.state.qualityRating),
+            clenliness_rating: parseInt(this.state.clenlinessRating),
+            review_body: this.state.reviewBody
         }
 
         const value = await AsyncStorage.getItem('@session_token');
-        const locationId = this.props.route.params.location_id;
-        console.log(value, location_id);
+        const location_id = await AsyncStorage.getItem('@location_id');
+        console.log(value, location_id, toSend);
 
-        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + locationId + '/review', {
+        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + '/review', {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
                 'X-Authorization': value,
             },
-            body: JSON.stringify(toSend)
+            body: JSON.stringify(toSend),
         })
         .then((response) => {
             if (response.status === 201) {
                 return response.json();
+                
             }else if(response.status === 401){
                 throw 'You must log in first';
             }else {
