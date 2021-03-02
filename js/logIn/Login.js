@@ -64,9 +64,9 @@ class LoginPage extends Component {
         }
       }
 
-    validateEmail(){
-      return !this.state.email.includes('@');
-    }
+    // validateEmail(){
+    //   return !this.state.email.includes('@');
+    // }
 
     render (){
 

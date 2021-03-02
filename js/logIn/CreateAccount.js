@@ -43,7 +43,7 @@ signUp = () => {
       .then((responseJson) => {
         console.log("User created with ID: ", responseJson);
         ToastAndroid.show("Account created", ToastAndroid.SHORT);
-        this.props.navigation.navigate("Login")
+        this.props.navigation.navigate("Login");
       })
       .catch((error) => {
         console.log((error));
@@ -55,17 +55,17 @@ signUp = () => {
     Emptyfields(){
       if(this.state.email=="")
       {
-        this.setState({EmptyError:"Please fill in email fields"})
+        this.setState({EmptyError:"Please fill in email field"});
       } else {
-        this.setState({EmptyError:""})
+        this.setState({EmptyError:""});
       }
     }
 
     PasswordCheck(){
       if(this.state.password == this.state.confirmPass){
-        this.setState({PasswordError:""})
+        this.setState({PasswordError:""});
       } else {
-        this.setState({PasswordError:"The passwords do not match"})
+        this.setState({PasswordError:"The passwords do not match"});
       }
     }
 

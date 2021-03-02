@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import {View, StyleSheet, Text, TouchableOpacity, ScrollView, ToastAndroid, LogBox} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FlatList } from 'react-native-gesture-handler';
-
-LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead.']);
 
 class Account extends Component {
     constructor(props){
@@ -39,9 +36,9 @@ class Account extends Component {
         const user_id = parseInt(id);
         const value = await AsyncStorage.getItem('@session_token');
 
-        console.log(id, value);
+        console.log(user_id, value);
 
-        return fetch('http://10.0.2.2:3333/api/1.o.o/user/'+user_id, {
+        return fetch("http://10.0.2.2:3333/api/1.0.0/user/" + user_id, {
             method: 'get',
             headers: {
                 ID: user_id,
@@ -55,7 +52,6 @@ class Account extends Component {
                 ToastAndroid.show('You are not logged in', ToastAndroid.SHORT);
                 this.props.navigation.navigate('Login');
             } else if(response.status === 404) {
-                console.log('here');
                 throw 'Not found';
             } else if(response.status === 500){
                 throw 'Server error';

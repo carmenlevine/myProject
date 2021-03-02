@@ -16,22 +16,22 @@ class EditAccountPage extends Component {
     }
 
     updateAccount = async () => {
-        let to_send = {
+        const to_send = {
             "first_name":this.state.firstName,
             "last_name":this.state.lastName,
             "email":this.state.email,
             "password":this.state.password
           }
 
-          const id = await AsyncStorage.getItem('@user_id');
-          const userId = JSON.parse(id);
+          const id = await AsyncStorage.getItem('@id');
+          const user_id = parseInt(id);
           const value = await AsyncStorage.getItem('@session_token');
           console.log(user_id, value);
 
-          return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + userId, {
+          return fetch("http://10.0.2.2:3333/api/1.0.0/user" + user_id, {
               method: 'patch',
               headers: {
-                  'Content-Type': 'application/json',
+                  ID: user_id,
                   'X-Authorization': value
               },
               body:JSON.stringify(to_send)
@@ -39,22 +39,40 @@ class EditAccountPage extends Component {
           .then((response) => {
             if(response.status === 200){
                ToastAndroid.show('Details updated successfully', ToastAndroid.SHORT);
-            }else {
-                throw 'Something went wrong';
+               return response.json();
+              }else if (response.status === 404){
+              throw 'Not found';
+            } else if (response.status === 500){
+              throw 'Server error';
+            } else {
+              throw 'Something else';
             }
         })
         .then((responseJson) => {
             console.log('User account updated');
-            this.props.navigation.navigate('Home');
+            ToastAndroid.show('User account updated', ToastAndroid.SHORT);
+            this.props.navigation.navigate('Account');
         })
         .catch((error) => {
             console.log(error);
         })
     }
 
-    updateTO (){
-        this.updateAccount();
-        this.props.navigation.navigate('HomeScreen');
+    //validation
+    Emptyfields(){
+      if(this.state.email==""){
+        this.setState({EmptyError:"Please fill in email field"});
+      } else {
+        this.setState({EmptyError:""});
+      }
+    }
+
+    PasswordCheck(){
+      if (this.state.password == this.state.confirmPass){
+        this.setState({PasswordError:""});
+      } else {
+        this.setState({PasswordError:"The passwords do not match"});
+      }
     }
 
     render(){
@@ -120,7 +138,7 @@ class EditAccountPage extends Component {
           <View style={styles.formItem}>
             <TouchableOpacity
             style={styles.formTouch}
-            onPress={() => this.updateTO()}
+            onPress={() => this.updateAccount()}
             >
               <Text style={styles.formTouchText}>Update</Text>
             </TouchableOpacity>
