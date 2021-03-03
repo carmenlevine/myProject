@@ -8,6 +8,8 @@ import { AirbnbRating } from 'react-native-ratings';
          super(props);
 
          this.state = {
+            // locationData: [],
+            // locationInfo: '',
             overallRating: null,
             priceRating: null,
             qualityRating: null,
@@ -43,12 +45,12 @@ import { AirbnbRating } from 'react-native-ratings';
         }
 
         const value = await AsyncStorage.getItem('@session_token');
-        const locationId = this.props.route.params.location_id;
-        const reviewId = this.props.route.params.review_id;
+        const location_id = await AsyncStorage.getItem('@location_id');
+        const review_id = this.props.route.params.review_id;
 
-        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + locationId + '/review/' + reviewId, {
+        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
             method: 'patch',
-              headers: {
+            headers: {
                   'Content-Type': 'application/json',
                   'X-Authorization': value
             },
@@ -56,23 +58,28 @@ import { AirbnbRating } from 'react-native-ratings';
         })
         .then((response) => {
             if (response.status === 200){
-                console.log(response);
-            }else {
+                return response.json();
+            }else if (response.status === 401){
+                throw 'You must log in first';
+            } else if (response === 400){
+                throw 'Bad request';
+            } else if (response === 404){
+                throw 'Not found';
+            } else {
                 throw 'Something went wrong';
             }
         })
-        .then(async () => {
+        .then((response) => {
             console.log('Review updated');
-            this.props.navigation.navigate('Home');
-            ToastAndroid.show('Review updated successfully', ToastAndroid.SHORT);
+            ToastAndroid.show('Review updated', ToastAndroid.SHORT);
         })
         .catch((error) => {
             console.log(error);
-        })
+        });
     }
 
     deleteReview = async () => {
-        let to_send = {
+        const to_send = {
             overallRating: parseInt(this.state.overall_rating),
             priceRating: parseInt(this.state.price_rating),
             qualityRating: parseInt(this.state.quality_rating),
@@ -81,10 +88,10 @@ import { AirbnbRating } from 'react-native-ratings';
         }
 
         const value = await AsyncStorage.getItem('@session_token');
-        const location_id = this.props.route.params.item.location.location_id;
+        const location_id = await AsyncStorage.getItem('@location_id');
         const review_id = this.props.route.params.item.review.review_id;
 
-        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review' + review_id, {
+        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json',
@@ -94,28 +101,35 @@ import { AirbnbRating } from 'react-native-ratings';
         })
         .then((response) => {
             if(response.status === 200){
+                ToastAndroid.show('Review deleted', ToastAndroid.SHORT);
                 return response.json();
-            } else if(response.status === 401){
-                throw 'You need to log in first';
+            }else if (response.status === 401){
+                throw 'You must log in first';
+            } else if (response === 400){
+                throw 'Bad request';
+            } else if (response === 404){
+                throw 'Not found';
             } else {
                 throw 'Something went wrong';
             }
         })
         .then(async (responseJson) => {
             console.log(responseJson);
-            ToastAndroid.show('Review deleted', ToastAndroid.SHORT);
+            this.props.navigation.navigate('ViewReviews');
         })
         .catch((error) => {
             console.log(error);
-        })
+        });
     }
 
     deleteButton() {
         this.deleteReview();
-        this.props.navigation.navigate('Review');
+        this.props.navigation.navigate('ViewReviews');
     }
 
     render(){
+        const navigation = this.props.navigation;
+
         return(
             <ScrollView style={styles.container}>
                    <Text style={styles.header}>Update a review</Text>
@@ -124,6 +138,7 @@ import { AirbnbRating } from 'react-native-ratings';
                        <AirbnbRating
                        selectedColor={'#FFD700'}
                        size={20}
+                       defaultRating={this.props.route.params.item.review.overall_rating}
                        onFinishRating={(overallRating) => this.setState({overallRating})}
                        />
                    </View>
@@ -133,6 +148,7 @@ import { AirbnbRating } from 'react-native-ratings';
                        <AirbnbRating
                        selectedColor={'#FFD700'}
                        size={20}
+                       defaultRating={this.props.route.params.item.review.price_rating}
                        onFinishRating={(priceRating) => this.setState({priceRating})}
                        />
                    </View>
@@ -142,6 +158,7 @@ import { AirbnbRating } from 'react-native-ratings';
                        <AirbnbRating
                        selectedColor={'#FFD700'}
                        size={20}
+                       defaultRating={this.props.route.params.item.review.quality_rating}
                        onFinishRating={(qualityRating) => this.setState({qualityRating})}
                        />
                    </View>
@@ -151,6 +168,7 @@ import { AirbnbRating } from 'react-native-ratings';
                        <AirbnbRating
                        selectedColor={'#FFD700'}
                        size={20}
+                       defaultRating={this.props.route.params.item.review.clenliness_rating}
                        onFinishRating={(clenlinessRating) => this.setState({clenlinessRating})}
                        />
                    </View>
@@ -185,7 +203,7 @@ import { AirbnbRating } from 'react-native-ratings';
                    <View style={styles.formItem}>
                     <TouchableOpacity
                     style={styles.formCancelTouch}
-                    onPress={() => this.props.navigation.navigate("Home")}
+                    onPress={() => this.props.navigation.navigate("ViewReviews")}
                     >
                     <Text style={styles.formCancelText}>Cancel</Text>
                     </TouchableOpacity>

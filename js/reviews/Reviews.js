@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, FlatList} from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, FlatList, StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Reviews extends Component {
@@ -19,7 +19,7 @@ class Reviews extends Component {
             headers: {
                 'Content-Type': 'application/json',
                 'X-Authorization': value
-            }
+            },
         })
         .then((response) => {
             if (response.status === 200){
@@ -46,9 +46,9 @@ class Reviews extends Component {
         this.getLocationInfo();
     }
 
-    addReview = async () => {
+    addReview = async (locationInfo) => {
         await AsyncStorage.setItem('@location_id', locationInfo+'');
-        //this.props.navigation.navigate('ReviewStack');
+        this.props.navigation.navigate('AddReview');
     }
 
     render(){
@@ -57,12 +57,13 @@ class Reviews extends Component {
                 <FlatList 
                 data={this.state.locationData}
                 renderItem={({item}) => (
-                    <View>
+                    <View style={styles.formItem}>
                         <Text>{item.location_name}</Text>
                         <TouchableOpacity
+                        style={styles.formTouch}
                         onPress={() => this.addReview(item.location_id)}
-                        title="Add a Review"
                         />
+                        <Text style={styles.formTouchText}>Add a review</Text>
                         </View>
                 )}
                 keyExtractor={(item, index) => item.id}
@@ -71,5 +72,21 @@ class Reviews extends Component {
         );
     }
 }
+
+const styles = StyleSheet.create({
+    formItem: {
+        padding: 20
+    },
+    formTouch: {
+        backgroundColor: 'lightblue',
+        padding:10,
+        alignItems: 'center'
+    },
+    formTouchText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'steelblue'
+    }
+});
 
 export default Reviews;

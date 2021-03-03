@@ -56,18 +56,18 @@ class AddReviewPage extends Component {
         })
         .then((response) => {
             if (response.status === 201) {
+                ToastAndroid.show('Review created', ToastAndroid.SHORT);
+                this.props.navigation.navigate('Home');
                 return response.json();
-                
             }else if(response.status === 401){
                 throw 'You must log in first';
-            }else {
+            }else if(response === 400){
+                throw 'Bad request';
+            } else if(response === 404){
+                throw 'Not found';
+            } else {
                 throw 'Something went wrong';
             }
-        })
-        .then(async () => {
-            console.log('Review created');
-            this.props.navigation.navigate('Home');
-            ToastAndroid.show('Review created', ToastAndroid.SHORT);
         })
         .catch((error) => {
             console.log((error));
@@ -128,12 +128,23 @@ class AddReviewPage extends Component {
                    />
                    </View>
 
+                   <View style={styles.formItem}>
                    <TouchableOpacity
                    style={styles.formTouch}
                    onPress={() => {this.addReview()}}
                    >
                        <Text style={styles.formTouchText}>Add Review</Text>
                    </TouchableOpacity>
+                   </View>
+
+                   <View style={styles.formItem}>
+                    <TouchableOpacity
+                    style={styles.formCancelTouch}
+                    onPress={() => this.props.navigation.navigate("Home")}
+                    >
+                    <Text style={styles.formCancelText}>Cancel</Text>
+                    </TouchableOpacity>
+                    </View>
                </ScrollView>
                 );
         }
@@ -183,7 +194,17 @@ const styles = StyleSheet.create({
     },
     formItem: {
         padding:20
-    }
+    },
+    formCancelTouch: {
+        backgroundColor: 'red',
+        padding:10,
+        alignItems: 'center'
+      },
+    formCancelText: {
+        fontSize:15,
+        fontWeight: 'bold',
+        color:'black'
+      }
 });
 
 export default AddReviewPage;
