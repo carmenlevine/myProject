@@ -5,10 +5,9 @@ import HomeScreen from '../logIn/HomeScreen';
 import LogoutPage from '../logIn/Logout';
 import Login from '../logIn/Login';
 import Account from '../navigation/AccountStack';
-import CreateReview from '../navigation/ReviewStack';
+import ViewReviews from '../navigation/ReviewStack';
 import Locations from '../locations/Locations';
 import FindLocations from '../locations/FindLocations';
-// import ViewReviews from '../reviews/ViewReviews';
  
 const Drawer = createDrawerNavigator();
 
@@ -21,8 +20,7 @@ class DrawerNavigator extends Component {
                 <Drawer.Screen name="Account" component={Account} />
                 <Drawer.Screen name="Locations" component={Locations} />
                 <Drawer.Screen name="FindLocations" component={FindLocations} />
-                <Drawer.Screen name="CreateReview" component={CreateReview}/>
-                {/* <Drawer.Screen name="ViewReviews" component={ViewReviews} /> */}
+                <Drawer.Screen name="ViewReviews" component={ViewReviews}/>
                 <Drawer.Screen name="Logout" component={LogoutPage} />
             </Drawer.Navigator>
         );

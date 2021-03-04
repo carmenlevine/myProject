@@ -16,23 +16,6 @@ class AddReviewPage extends Component {
         }
     }
 
-    // componentDidMount(){
-    //     this.unsubscribe = this.props.navigation.addListener('focus',() => {
-    //         this.checkLoggedIn();
-    //     });
-    // }
-
-    // componentWillUnmount(){
-    //     this.unsubscribe();
-    // }
-
-    // checkLoggedIn = async () => {
-    //     const value = await AsyncStorage.getItem('@session_token');
-    //     if (value == null){
-    //         this.props.navigation.navigate("Login");
-    //     }
-    // }
-
     addReview = async () => {
         const toSend = {
             overall_rating: parseInt(this.state.overallRating),
@@ -57,7 +40,7 @@ class AddReviewPage extends Component {
         .then((response) => {
             if (response.status === 201) {
                 ToastAndroid.show('Review created', ToastAndroid.SHORT);
-                this.props.navigation.navigate('Home');
+                this.props.navigation.navigate('ViewReviews');
                 return response.json();
             }else if(response.status === 401){
                 throw 'You must log in first';
@@ -127,7 +110,7 @@ class AddReviewPage extends Component {
                    value={this.state.reviewBody}
                    />
                    </View>
-
+ 
                    <View style={styles.formItem}>
                    <TouchableOpacity
                    style={styles.formTouch}
@@ -140,7 +123,7 @@ class AddReviewPage extends Component {
                    <View style={styles.formItem}>
                     <TouchableOpacity
                     style={styles.formCancelTouch}
-                    onPress={() => this.props.navigation.navigate("Home")}
+                    onPress={() => this.props.navigation.navigate("ViewReviews")}
                     >
                     <Text style={styles.formCancelText}>Cancel</Text>
                     </TouchableOpacity>

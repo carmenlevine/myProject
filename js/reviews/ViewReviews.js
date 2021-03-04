@@ -74,6 +74,16 @@ class ViewReviews extends Component {
         return(
             <ScrollView>
                 <Text style={styles.title}>My Reviews</Text>
+
+                <View style={styles.formItem}>
+                    <TouchableOpacity
+                    style={styles.formAddRevTouch}
+                    onPress={() => this.props.navigation.navigate('AddReview')}
+                    >
+                        <Text style={styles.formAddRevText}>Add a new review</Text>
+                    </TouchableOpacity>
+                </View>
+
                 <FlatList 
                 data={this.state.listData.reviews}
                 renderItem={({item}) => (
@@ -81,19 +91,19 @@ class ViewReviews extends Component {
                     <Text style={styles.locName}>{item.location.location_name}</Text>
                     
                     <View style={styles.formReview}>
-                        <Text style={styles.reviewText}>'Overall Rating: ' {item.review.overall_rating}</Text>
+                        <Text style={styles.reviewText}>Overall Rating: {item.review.overall_rating}</Text>
                         </View>
 
                     <View style={styles.formReview}>
-                        <Text style={styles.reviewText}>'Price Rating: ' {item.review.price_rating}</Text>
+                        <Text style={styles.reviewText}>Price Rating: {item.review.price_rating}</Text>
                         </View>
 
                     <View style={styles.formReview}>
-                        <Text style={styles.reviewText}>'Quality Rating: ' {item.review.quality_rating}</Text>
+                        <Text style={styles.reviewText}>Quality Rating: {item.review.quality_rating}</Text>
                         </View>
 
                     <View style={styles.formReview}>
-                        <Text style={styles.reviewText}>Cleanliness Rating: ' {item.review.clenliness_rating}</Text>
+                        <Text style={styles.reviewText}>Cleanliness Rating: {item.review.clenliness_rating}</Text>
                         </View>
 
                     <View style={styles.formReview}>
@@ -156,6 +166,15 @@ const styles = StyleSheet.create({
     fontSize:20,
     fontWeight:'bold',
     color:'steelblue'
+    },
+    formAddRevTouch: {
+        backgroundColor: 'yellow',
+        padding:10,
+    },
+    formAddRevText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'black'
     }
 
 });
