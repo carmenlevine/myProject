@@ -59,7 +59,7 @@ class FindLocation extends Component {
                 console.log(responseJson);
                 this.setState({
                     isLoading: false,
-                    getLocation: responseJson
+                    listData: responseJson
                 })
             })
             .catch((error) => {
@@ -94,7 +94,7 @@ class FindLocation extends Component {
                         renderItem={({item}) => (
                             <TouchableOpacity 
                             style={styles.LocContainer}
-                            onPress={() => navigation.navigate('Locations', {
+                            onPress={() => navigation.navigate('AddReview', {
                                 location_id: item.location_id,
                             })}
                             >

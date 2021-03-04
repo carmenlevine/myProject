@@ -3,8 +3,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import AddReview from '../reviews/AddReviewPage';
 import EditReview from '../reviews/EditReview';
-import Review from '../reviews/Reviews';
+import CreateReview from '../reviews/Reviews';
 import ViewReviews from '../reviews/ViewReviews';
+import Locations from '../locations/FindLocations';
 
 const Stack = createStackNavigator();
 
@@ -16,7 +17,8 @@ class ReviewStack extends Component {
             initialRouteName="ViewReviews"
             >
                 <Stack.Screen name="ViewReviews" component={ViewReviews} />
-                <Stack.Screen name="Review" component={Review} />
+                <Stack.Screen name="FindLocations" component={Locations} />
+                <Stack.Screen name="CreateReview" component={CreateReview} />
                 <Stack.Screen name="EditReview" component={EditReview} />
                 <Stack.Screen name="AddReview" component={AddReview} />
 

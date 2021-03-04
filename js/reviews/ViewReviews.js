@@ -10,7 +10,8 @@ class ViewReviews extends Component {
         super(props);
 
         this.state = {
-            listData: []
+            listData: [],
+            isLiked: false
         }
     }
 
@@ -59,13 +60,78 @@ class ViewReviews extends Component {
             }
         })
         .then((responseJson) => {
+            console.log(responseJson.reviews);
             this.setState({
-                listData: responseJson
+                listData: responseJson.reviews
             });
         })
         .catch((error) => {
             console.log(error);
         });
+    }
+
+    like = async() => {
+        const value = await AsyncStorage.getItem('@session_token');
+        const location_id = await AsyncStorage.getItem('@location_id');
+        const review_id = this.props.route.params.item.review.review_id;
+
+        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + '/review/' + review_id + '/like', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Authorization': value
+            },
+        })
+        .then((response) => {
+            if (response.status === 200){
+                this.setState({ isLiked: true });
+                ToastAndroid.show('Review liked', ToastAndroid.SHORT);
+                return response.json();
+            } else if (response.status === 400){
+                throw 'Bad request';
+            } else if (response.status === 401){
+                throw 'You must log in first';
+            } else if (response.status === 404){
+                throw 'Not found';
+            } else {
+                throw 'Something went wrong';
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+
+    unlike = async () => {
+        const value = await AsyncStorage.getItem('@session_token');
+        const location_id = await AsyncStorage.getItem('@location_id');
+        const review_id = this.props.route.params.item.review.review_id;
+
+        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + '/review/' + review_id + '/like', {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Authorization': value
+            }
+        })
+        .then((response) => {
+            if (response.status === 200){
+                this.setState({ isLiked: false});
+                ToastAndroid.show('Review unliked', ToastAndroid.SHORT);
+                return response.json();
+            } else if (response.status === 400){
+                throw 'Bad request';
+            } else if (response.status === 401){
+                throw 'You must log in first';
+            } else if (response.status === 404){
+                throw 'Not found';
+            } else {
+                throw 'Something went wrong';
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        })
     }
 
     render(){
@@ -78,14 +144,14 @@ class ViewReviews extends Component {
                 <View style={styles.formItem}>
                     <TouchableOpacity
                     style={styles.formAddRevTouch}
-                    onPress={() => this.props.navigation.navigate('AddReview')}
+                    onPress={() => this.props.navigation.navigate('CreateReview')}
                     >
                         <Text style={styles.formAddRevText}>Add a new review</Text>
                     </TouchableOpacity>
                 </View>
 
                 <FlatList 
-                data={this.state.listData.reviews}
+                data={this.state.listData}
                 renderItem={({item}) => (
                     <View style={styles.flatlistContainer}> 
                     <Text style={styles.locName}>{item.location.location_name}</Text>
@@ -111,10 +177,32 @@ class ViewReviews extends Component {
                         </View>
 
                     <View style={styles.formItem}>
+                        <Text>Likes: {item.review.likes}</Text>
+                    </View>
+
+                    <View style={styles.formItem}>
+                        <TouchableOpacity
+                        style={styles.formLike}
+                        onPress={() => this.like()}
+                        >
+                            <Text style={styles.formLikeText}>Like review</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.formItem}>
+                        <TouchableOpacity
+                        style={styles.formUnlike}
+                        onPress={() => this.unlike()}
+                        >
+                            <Text style={styles.formLikeText}>Unlike review</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.formItem}>
                         <TouchableOpacity
                         style={styles.formTouch}
                         onPress={() => this.props.navigation.navigate('EditReview', {
-                            item: item,
+                            location_id: item.location.location_id, review_id: item.review.review_id
                         })}
                         >
                             <Text style={styles.formTouchText}>Edit Review</Text>
@@ -166,6 +254,17 @@ const styles = StyleSheet.create({
     fontSize:20,
     fontWeight:'bold',
     color:'steelblue'
+    },
+    formLike: {
+        backgroundColor: 'lightgreen',
+        padding: 5
+    },
+    formLikeText: {
+        fontSize: 15,
+    },
+    formUnlike: {
+        backgroundColor: 'orangered',
+        padding: 5
     },
     formAddRevTouch: {
         backgroundColor: 'yellow',

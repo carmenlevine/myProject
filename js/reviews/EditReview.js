@@ -18,7 +18,7 @@ import { AirbnbRating } from 'react-native-ratings';
          }
      }
 
-    editReview = async () => {
+     editReview = async () => {
         const to_send = {
             overallRating: parseInt(this.state.overall_rating),
             priceRating: parseInt(this.state.price_rating),
@@ -34,13 +34,13 @@ import { AirbnbRating } from 'react-native-ratings';
         return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
             method: 'patch',
             headers: {
-                  'Content-Type': 'application/json',
-                  'X-Authorization': value
+                'Content-Type': 'application/json',
+                'X-Authorization': value
             },
             body: JSON.stringify(to_send),
         })
         .then((response) => {
-            if (response.status === 200){
+            if(response.status === 200){
                 ToastAndroid.show('Review updated', ToastAndroid.SHORT);
                 this.props.navigation.navigate('ViewReviews');
                 return response.json();
@@ -48,7 +48,7 @@ import { AirbnbRating } from 'react-native-ratings';
                 throw 'You must log in first';
             } else if (response === 400){
                 throw 'Bad request';
-            } else if (response === 404){
+            } else if (response === 404){ 
                 throw 'Not found';
             } else {
                 throw 'Something went wrong';

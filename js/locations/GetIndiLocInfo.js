@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, FlatList, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class Locations extends Component{
+class GetIndiLocInfo extends Component {
     constructor(props){
         super(props);
 
@@ -12,10 +12,11 @@ class Locations extends Component{
         }
     }
 
-    getLocationInfo = async () => {
+    getIndiLocationInfo = async () => {
         const value = await AsyncStorage.getItem('@session_token');
+        const location_id = await AsyncStorage.getItem('@location_id');
 
-        return fetch("http://10.0.2.2:3333/api/1.0.0/find/", {
+        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + + location_id, {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
@@ -46,29 +47,32 @@ class Locations extends Component{
     }
 
     componentDidMount(){
-        this.getLocationInfo();
+        this.getIndiLocationInfo();
     }
 
     render(){
         return(
             <ScrollView>
                 <View style={styles.formItem}>
-                    <Text style={styles.formTitle}>Coffee Locations</Text>
-                </View>
-                <FlatList 
-                data={this.state.locationData}
-                renderItem={({item}) => (
-                    <View style={styles.formItem}>
-                        <Text>{item.location_name}</Text>
-                        <TouchableOpacity 
-                        style={styles.formTouch}
-                        onPress={() => this.props.navigate('GetIndiLocInfo')}
-                        />
-                    </View>
-                )}
-                keyExtractor={(item, index) => item.id}
-                />
+                    <FlatList 
+                    data={this.state.locationData}
+                    renderItem={({item}) => (
+                        <View style={styles.formItem}>
+                            <Text>{item.location_name}</Text>
+                            <Text>{item.location_town}</Text>
+                            <Text>Latitude: {item.latitude}</Text>
+                            <Text>Longitude: {item.longitude}</Text>
+                            <Text style={styles.header}>Average Ratings</Text>
+                            <Text>Overall: {item.avg_overall_rating}</Text>
+                            <Text>Price: {item.avg_price_rating}</Text>
+                            <Text>Quality: {item.avg_quality_rating}</Text>
+                            <Text>Cleanliness: {item.avg_clenliness_rating}</Text>
 
+                        </View>
+                    )}
+                    
+                    />
+                </View>
             </ScrollView>
         );
     }
@@ -78,10 +82,10 @@ const styles = StyleSheet.create({
     formItem: {
         padding: 20
     },
-    formTitle: {
-       fontSize: 30,
-       fontWeight: 'bold'
+    header: {
+        fontWeight: 'bold',
+        fontSize: 25
     }
 });
 
-export default Locations;
+export default GetIndiLocInfo;
