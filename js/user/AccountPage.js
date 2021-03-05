@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {View, StyleSheet, Text, TouchableOpacity, ScrollView, ToastAndroid, LogBox} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TextInput } from 'react-native-gesture-handler';
+import { FlatList, TextInput } from 'react-native-gesture-handler';
 
 class Account extends Component {
     constructor(props){
@@ -61,6 +61,7 @@ class Account extends Component {
             }
         })
         .then((responseJson) => {
+            console.log(responseJson);
                 this.setState({
                     isLoading: false,
                     listData: responseJson,
@@ -91,6 +92,20 @@ class Account extends Component {
                         >
                             <Text style={styles.formTouchText}>Update account</Text>
                         </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.formItem}>
+                        <Text style={styles.AccTitle}>My favourite reviews</Text>
+                        <FlatList 
+                        data={this.state.listData.favourite_locations}
+                        renderItem={({item}) => (
+                            <View style={styles.favContainer}>
+                                <Text>{item.location_name}</Text>
+                                <Text>{item.location_town}</Text>
+                            </View>
+                        )}
+                        keyExtractor={(item, index) => item.location_id.toString()}
+                        />
                     </View>
 
                     
@@ -140,6 +155,11 @@ const styles = StyleSheet.create({
     paddingVertical: 25,
     paddingHorizontal: 15,
     flexDirection: 'row'
+    },
+    favContainer: {
+        alignContent: 'center',
+        justifyContent: 'center',
+        padding: 8
     }
 });
 

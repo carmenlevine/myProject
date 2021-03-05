@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, FlatList, StyleSheet } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, FlatList, StyleSheet, ToastAndroid } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Locations extends Component{
@@ -8,8 +8,13 @@ class Locations extends Component{
 
         this.state = {
             locationData: [],
-            locationInfo: ''
+            locationInfo: '',
+            isFavourited: false
         }
+    }
+
+    componentDidMount(){
+        this.getLocationInfo();
     }
 
     getLocationInfo = async () => {
@@ -45,13 +50,69 @@ class Locations extends Component{
         });
     }
 
-    componentDidMount(){
-        this.getLocationInfo();
+    favourite = async (location_id) => {
+        const value = await AsyncStorage.getItem('@session_token');
+        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + "/favourite", {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Authorization': value
+            },
+        })
+        .then((response) => {
+            if (response.status === 200){
+                this.setState({ isFavourited: true });
+                ToastAndroid.show('Location favourited', ToastAndroid.SHORT);
+            } else if (response.status === 401){
+                ToastAndroid.show('You are not logged in', ToastAndroid.SHORT);
+                this.props.navigation.navigate('Login');
+            } else if (response.status === 404){
+                throw 'Not found';
+            } else {
+                throw 'Something went wrong';
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+
+    unfavourite = async (location_id) => {
+        const value = await AsyncStorage.getItem('@session_token');
+        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + "/favourite", {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Authorization': value
+            },
+        })
+        .then((response) => {
+            if (response.status === 200){
+                this.setState({ isFavourited: false });
+                ToastAndroid.show('Location unfavourited', ToastAndroid.SHORT);
+                return response.json();
+            } else if (response.status === 401){
+                ToastAndroid.show('You are not logged in', ToastAndroid.SHORT);
+                this.props.navigation.navigate('Login');
+            } else if (response.status === 404){
+                throw 'Not found';
+            } else {
+                throw 'Something went wrong';
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+
+    getAllReviews = async (locationInfo) => {
+        await AsyncStorage.setItem('@location_id', locationInfo+'');
+        this.props.navigation.navigate('GetIndiLocations');
     }
 
     render(){
         return(
-            <ScrollView>
+            <View>
                 <View style={styles.formItem}>
                     <Text style={styles.formTitle}>Coffee Locations</Text>
                 </View>
@@ -62,14 +123,34 @@ class Locations extends Component{
                         <Text>{item.location_name}</Text>
                         <TouchableOpacity 
                         style={styles.formTouch}
-                        onPress={() => this.props.navigate('GetIndiLocInfo')}
+                        onPress={() => this.getAllReviews(item.location_id)}
                         />
+                        <Text style={styles.formTouchText}>See all reviews</Text>
+
+                        <View style={styles.formItem}>
+                            <TouchableOpacity
+                            style={styles.formFav}
+                            onPress={() => this.favourite(item.location_id)}
+                            >
+                                <Text style={styles.formFavText}>Favourite location</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.formItem}>
+                            <TouchableOpacity
+                            style={styles.formUnFav}
+                            onPress={() => this.unfavourite(item.location_id)}
+                            >
+                                <Text style={styles.formFavText}>Unfavourite location</Text>
+                            </TouchableOpacity>
+                        </View>
+
                     </View>
                 )}
                 keyExtractor={(item, index) => item.id}
                 />
 
-            </ScrollView>
+            </View>
         );
     }
 }
@@ -81,6 +162,27 @@ const styles = StyleSheet.create({
     formTitle: {
        fontSize: 30,
        fontWeight: 'bold'
+    },
+    formTouch: {
+        backgroundColor: 'lightblue',
+        padding:10,
+        alignItems: 'center'
+    },
+    formTouchText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'steelblue'
+    },
+    formFav: {
+        backgroundColor: 'lightgreen',
+        padding: 5
+    },
+    formFavText: {
+        fontSize: 15,
+    },
+    formUnFav: {
+        backgroundColor: 'orangered',
+        padding: 5
     }
 });
 

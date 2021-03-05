@@ -12,6 +12,25 @@ class GetIndiLocInfo extends Component {
         }
     }
 
+    componentDidMount(){
+        this.unsubscribe = this.props.navigation.addListener('focus', () => {
+            this.checkLoggedIn();
+        });
+
+        this.getIndiLocationInfo();
+    }
+
+    componentWillUnmount(){
+        this.unsubscribe();
+    }
+
+    checkLoggedIn = async () => {
+        const value = await AsyncStorage.getItem('@session_token');
+        if (value == null){
+            this.props.navigation.navigate('Login');
+        }
+    }
+
     getIndiLocationInfo = async () => {
         const value = await AsyncStorage.getItem('@session_token');
         const location_id = await AsyncStorage.getItem('@location_id');
@@ -46,16 +65,15 @@ class GetIndiLocInfo extends Component {
         });
     }
 
-    componentDidMount(){
-        this.getIndiLocationInfo();
-    }
-
     render(){
+
+        const navigation = this.props.navigation;
+
         return(
             <ScrollView>
                 <View style={styles.formItem}>
                     <FlatList 
-                    data={this.state.locationData}
+                    data={this.state.locationData.location_reviews}
                     renderItem={({item}) => (
                         <View style={styles.formItem}>
                             <Text>{item.location_name}</Text>
@@ -63,14 +81,14 @@ class GetIndiLocInfo extends Component {
                             <Text>Latitude: {item.latitude}</Text>
                             <Text>Longitude: {item.longitude}</Text>
                             <Text style={styles.header}>Average Ratings</Text>
-                            <Text>Overall: {item.avg_overall_rating}</Text>
+                            <Text>Overall: </Text>
                             <Text>Price: {item.avg_price_rating}</Text>
                             <Text>Quality: {item.avg_quality_rating}</Text>
                             <Text>Cleanliness: {item.avg_clenliness_rating}</Text>
-
+                            <Text>{item.review_body}</Text>
                         </View>
                     )}
-                    
+                    keyExtractor={(item, index) => item.review_id.toString()}
                     />
                 </View>
             </ScrollView>
