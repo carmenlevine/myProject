@@ -5,7 +5,6 @@ import AddReview from '../reviews/AddReviewPage';
 import EditReview from '../reviews/EditReview';
 import CreateReview from '../reviews/Reviews';
 import ViewReviews from '../reviews/ViewReviews';
-import Locations from '../locations/FindLocations';
 
 const Stack = createStackNavigator();
 
@@ -17,7 +16,6 @@ class ReviewStack extends Component {
             initialRouteName="ViewReviews"
             >
                 <Stack.Screen name="ViewReviews" component={ViewReviews} />
-                <Stack.Screen name="FindLocations" component={Locations} />
                 <Stack.Screen name="CreateReview" component={CreateReview} />
                 <Stack.Screen name="EditReview" component={EditReview} />
                 <Stack.Screen name="AddReview" component={AddReview} />

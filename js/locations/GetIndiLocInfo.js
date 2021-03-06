@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, FlatList, StyleSheet } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, FlatList, StyleSheet, ToastAndroid } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class GetIndiLocInfo extends Component {
@@ -8,7 +8,7 @@ class GetIndiLocInfo extends Component {
 
         this.state = {
             locationData: [],
-            locationInfo: ''
+            isLiked: false
         }
     }
 
@@ -33,9 +33,10 @@ class GetIndiLocInfo extends Component {
 
     getIndiLocationInfo = async () => {
         const value = await AsyncStorage.getItem('@session_token');
-        const location_id = await AsyncStorage.getItem('@location_id');
+        const location_id = this.props.route.params.location_id;
+        console.log(location_id);
 
-        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + + location_id, {
+        return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+ location_id, {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
@@ -57,8 +58,68 @@ class GetIndiLocInfo extends Component {
         .then((responseJson) => {
             console.log(responseJson);
             this.setState({
-                locationData: responseJson
+                locationData: responseJson,
             });
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+
+    likeReview = async (review_id) => {
+        const value = await AsyncStorage.getItem('@session_token');
+        const location_id = this.props.route.params.location_id;
+
+        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + "/review/" + review_id + "/like", {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Authorization': value
+            },
+        })
+        .then((response) => {
+            if (response.status === 200){
+                this.setState({ isLiked: true });
+                ToastAndroid.show("Review liked", ToastAndroid.SHORT);
+                return response.json();
+            } else if (response.status === 401){
+                ToastAndroid.show('You are not logged in', ToastAndroid.SHORT);
+                this.props.navigation.navigate('Login');
+            } else if (response.status === 404){
+                throw 'Not found';
+            } else {
+                throw 'Something went wrong';
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+
+    unlikeReview = async (review_id) => {
+        const value = await AsyncStorage.getItem('@session_token');
+        const location_id = this.props.route.params.location_id;
+
+        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + "/review/" + review_id + "/like", {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Authorization': value
+            },
+        })
+        .then((response) => {
+            if (response.status === 200){
+                this.setState({ isLiked: false });
+                ToastAndroid.show("Review unliked", ToastAndroid.SHORT);
+                return response.json();
+            } else if (response.status === 401){
+                ToastAndroid.show('You are not logged in', ToastAndroid.SHORT);
+                this.props.navigation.navigate('Login');
+            } else if (response.status === 404){
+                throw 'Not found';
+            } else {
+                throw 'Something went wrong';
+            }
         })
         .catch((error) => {
             console.log(error);
@@ -72,24 +133,40 @@ class GetIndiLocInfo extends Component {
         return(
             <ScrollView>
                 <View style={styles.formItem}>
-                    <FlatList 
-                    data={this.state.locationData.location_reviews}
-                    renderItem={({item}) => (
-                        <View style={styles.formItem}>
-                            <Text>{item.location_name}</Text>
-                            <Text>{item.location_town}</Text>
-                            <Text>Latitude: {item.latitude}</Text>
-                            <Text>Longitude: {item.longitude}</Text>
-                            <Text style={styles.header}>Average Ratings</Text>
-                            <Text>Overall: </Text>
-                            <Text>Price: {item.avg_price_rating}</Text>
-                            <Text>Quality: {item.avg_quality_rating}</Text>
-                            <Text>Cleanliness: {item.avg_clenliness_rating}</Text>
-                            <Text>{item.review_body}</Text>
-                        </View>
-                    )}
-                    keyExtractor={(item, index) => item.review_id.toString()}
-                    />
+                <Text style={styles.header}>Location Information</Text>
+                </View>
+
+                <FlatList 
+                data={this.state.locationData.location_reviews}
+                renderItem={({item}) => (
+                    <View style={styles.formItem}>
+                        <Text>{item.review_body}</Text>
+                        <Text>Overall rating: {item.overall_rating}</Text>
+                        <Text>Price rating: {item.price_rating}</Text>
+                        <Text>Quality rating: {item.quality_rating}</Text>
+                        <Text>Cleanliness rating: {item.clenliness_rating}</Text>
+                        <Text>Likes: {item.likes}</Text>
+                        <TouchableOpacity 
+                        //style={styles.like}
+                        title='Like'
+                        onPress={() => this.likeReview()}
+                        />
+                        <TouchableOpacity 
+                        //style={styles.unlike}
+                        title='Unlike'
+                        onPress={() => this.unlikeReview()}
+                        />
+                    </View>
+                )}
+                keyExtractor={(item, index) => item.review_id.toString()}
+                />
+                <View style={styles.formItem}>
+                    <TouchableOpacity 
+                    style={styles.formTouch}
+                    onPress={() => this.props.navigation.navigate('GetLocations')}
+                    >
+                        <Text style={styles.formTouchText}>Back</Text>
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
         );
@@ -103,6 +180,22 @@ const styles = StyleSheet.create({
     header: {
         fontWeight: 'bold',
         fontSize: 25
+    },
+    like: {
+        backgroundColor: 'green'
+    },
+    unlike: {
+        backgroundColor: 'red'
+    },
+    formTouch: {
+      backgroundColor:'red',
+      padding:10,
+      alignItems:'center'
+    },
+    formTouchText: {
+      fontSize:20,
+      fontWeight:'bold',
+      color:'black'
     }
 });
 

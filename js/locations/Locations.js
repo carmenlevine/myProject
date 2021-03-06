@@ -14,7 +14,21 @@ class Locations extends Component{
     }
 
     componentDidMount(){
+        this.unsubscribe = this.props.navigation.addListener('focus', () => {
+            this.checkLoggedIn();
+        })
         this.getLocationInfo();
+    }
+
+    componentWillUnmount(){
+        this.unsubscribe();
+    }
+
+    checkLoggedIn = async () => {
+        const value = await AsyncStorage.getItem('@session_token');
+        if (value == null){
+            this.props.navigation.navigate('Login');
+        }
     }
 
     getLocationInfo = async () => {
@@ -42,7 +56,7 @@ class Locations extends Component{
         .then((responseJson) => {
             console.log(responseJson);
             this.setState({
-                locationData: responseJson
+                locationData: responseJson,
             });
         })
         .catch((error) => {
@@ -90,7 +104,6 @@ class Locations extends Component{
             if (response.status === 200){
                 this.setState({ isFavourited: false });
                 ToastAndroid.show('Location unfavourited', ToastAndroid.SHORT);
-                return response.json();
             } else if (response.status === 401){
                 ToastAndroid.show('You are not logged in', ToastAndroid.SHORT);
                 this.props.navigation.navigate('Login');
@@ -120,10 +133,18 @@ class Locations extends Component{
                 data={this.state.locationData}
                 renderItem={({item}) => (
                     <View style={styles.formItem}>
-                        <Text>{item.location_name}</Text>
+                        <Text style ={styles.formTitle}>{item.location_name}</Text>
+                        <Text>{item.location_town}</Text>
+                        <Text>Overall Rating: {item.avg_overall_rating}</Text>
+                        <Text>Price Rating: {item.avg_price_rating}</Text>
+                        <Text>Quality Rating: {item.avg_quality_rating}</Text>
+                        <Text>Cleanliness Rating: {item.avg_clenliness_rating}</Text>
+
                         <TouchableOpacity 
                         style={styles.formTouch}
-                        onPress={() => this.getAllReviews(item.location_id)}
+                        onPress={() => this.props.navigation.navigate('GetIndiLocations', {
+                            location_id: item.location_id,
+                        })}
                         />
                         <Text style={styles.formTouchText}>See all reviews</Text>
 
@@ -147,7 +168,7 @@ class Locations extends Component{
 
                     </View>
                 )}
-                keyExtractor={(item, index) => item.id}
+                keyExtractor={(item, index) => item.location_id.toString()}
                 />
 
             </View>

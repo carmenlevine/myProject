@@ -202,7 +202,8 @@ class ViewReviews extends Component {
                         <TouchableOpacity
                         style={styles.formTouch}
                         onPress={() => this.props.navigation.navigate('EditReview', {
-                            location_id: item.location.location_id, review_id: item.review.review_id
+                            location_id: item.location.location_id, 
+                            review_id: item.review.review_id
                         })}
                         >
                             <Text style={styles.formTouchText}>Edit Review</Text>
