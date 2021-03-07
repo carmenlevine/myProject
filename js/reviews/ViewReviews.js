@@ -36,13 +36,13 @@ class ViewReviews extends Component {
 
     getData = async () => {
         const id = await AsyncStorage.getItem('@id');
-        const user_id = parseInt(id);
+        //const user_id = parseInt(id);
         const value = await AsyncStorage.getItem('@session_token');
 
-        return fetch("http://10.0.2.2:3333/api/1.0.0/user/" + user_id, {
+        return fetch("http://10.0.2.2:3333/api/1.0.0/user/" + id, {
             method: 'get',
             headers: {
-                ID: user_id,
+                ID: id,
                 'X-Authorization': value
             },
         })
@@ -70,9 +70,13 @@ class ViewReviews extends Component {
         });
     }
 
-    like = async (review_id) => {
+    like = async () => {
         const value = await AsyncStorage.getItem('@session_token');
-        const location_id = await AsyncStorage.getItem('@location_id');
+        //const location_id = await AsyncStorage.getItem('@location_id');
+        const location_id = this.state.location_id;
+        const review_id = this.state.review_id;
+        //review_id = this.props.route.params.review.review_id;
+
         console.log(review_id);
 
         return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + '/review/' + review_id + '/like', {
@@ -86,7 +90,6 @@ class ViewReviews extends Component {
             if (response.status === 200){
                 this.setState({ isLiked: true });
                 ToastAndroid.show('Review liked', ToastAndroid.SHORT);
-                return response.json();
             } else if (response.status === 400){
                 throw 'Bad request';
             } else if (response.status === 401){
@@ -102,9 +105,10 @@ class ViewReviews extends Component {
         });
     }
 
-    unlike = async (review_id) => {
+    unlike = async () => {
         const value = await AsyncStorage.getItem('@session_token');
-        const location_id = await AsyncStorage.getItem('@location_id');
+        const location_id = this.state.location_id;
+        const review_id = this.state.review_id;
 
         return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + '/review/' + review_id + '/like', {
             method: 'delete',
@@ -117,7 +121,6 @@ class ViewReviews extends Component {
             if (response.status === 200){
                 this.setState({ isLiked: false});
                 ToastAndroid.show('Review unliked', ToastAndroid.SHORT);
-                return response.json();
             } else if (response.status === 400){
                 throw 'Bad request';
             } else if (response.status === 401){
@@ -154,6 +157,7 @@ class ViewReviews extends Component {
                 renderItem={({item}) => (
                     <View style={styles.flatlistContainer}> 
                     <Text style={styles.locName}>{item.location.location_name}</Text>
+                    <Text>{item.review.review_id}</Text>
                     
                     <View style={styles.formReview}>
                         <Text style={styles.reviewText}>Overall Rating: {item.review.overall_rating}</Text>
@@ -182,17 +186,27 @@ class ViewReviews extends Component {
                     <View style={styles.formItem}>
                         <TouchableOpacity
                         style={styles.formLike}
-                        onPress={() => this.like()}
-                        >
-                            <Text style={styles.formLikeText}>Like review</Text>
+                        onPress={() => {
+                            this.like(),
+                            this.setState({
+                            location_id: item.location.location_id,
+                            review_id: item.review.review_id
+                        })
+                    }}>
+                            <Text style={styles.formLikeText}>Set state</Text>
                         </TouchableOpacity>
                     </View>
 
                     <View style={styles.formItem}>
                         <TouchableOpacity
                         style={styles.formUnlike}
-                        onPress={() => this.unlike()}
-                        >
+                        onPress={() => {
+                            this.unlike(),
+                            this.setState({
+                                location_id: item.location.location_id,
+                                review_id: item.review.review_id
+                            })
+                        }}>
                             <Text style={styles.formLikeText}>Unlike review</Text>
                         </TouchableOpacity>
                     </View>

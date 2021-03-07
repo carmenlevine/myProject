@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, FlatList, StyleSheet} from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, LogBox, FlatList, StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+LogBox.ignoreLogs(['Warning: Each child in a list should have a unique "key" prop.']);
 
 class Reviews extends Component {
     constructor(props){
