@@ -8,8 +8,6 @@ import { AirbnbRating } from 'react-native-ratings';
          super(props);
 
          this.state = {
-            // locationData: [],
-            // locationInfo: '',
             overallRating: null,
             priceRating: null,
             qualityRating: null,
@@ -28,10 +26,10 @@ import { AirbnbRating } from 'react-native-ratings';
         }
 
         const value = await AsyncStorage.getItem('@session_token');
-        const location_id = await AsyncStorage.getItem('@location_id');
-        const review_id = this.props.route.params.item.review.review_id;
+        const location_id = this.props.route.params.location_id;
+        const review_id = this.props.route.params.review_id;
 
-        return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
+        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + "/review/" + review_id, {
             method: 'patch',
             headers: {
                 'Content-Type': 'application/json',
@@ -69,8 +67,8 @@ import { AirbnbRating } from 'react-native-ratings';
         }
 
         const value = await AsyncStorage.getItem('@session_token');
-        const location_id = await AsyncStorage.getItem('@location_id');
-        const review_id = this.props.route.params.item.review.review_id;
+        const location_id = this.props.route.params.review_id;
+        const review_id = this.props.route.params.review_id;
 
         return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
             method: 'delete',

@@ -70,10 +70,10 @@ class ViewReviews extends Component {
         });
     }
 
-    like = async() => {
+    like = async (review_id) => {
         const value = await AsyncStorage.getItem('@session_token');
         const location_id = await AsyncStorage.getItem('@location_id');
-        const review_id = this.props.route.params.item.review.review_id;
+        console.log(review_id);
 
         return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + '/review/' + review_id + '/like', {
             method: 'post',
@@ -102,10 +102,9 @@ class ViewReviews extends Component {
         });
     }
 
-    unlike = async () => {
+    unlike = async (review_id) => {
         const value = await AsyncStorage.getItem('@session_token');
         const location_id = await AsyncStorage.getItem('@location_id');
-        const review_id = this.props.route.params.item.review.review_id;
 
         return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + '/review/' + review_id + '/like', {
             method: 'delete',
