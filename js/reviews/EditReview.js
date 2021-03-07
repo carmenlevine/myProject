@@ -3,11 +3,15 @@ import { ScrollView, ToastAndroid, Text, TextInput, StyleSheet, TouchableOpacity
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AirbnbRating } from 'react-native-ratings';
 
+//This page allows the chosen review to be editted, which will then be shown in the view all reviews screen.
+//This page also allows for the specificed review to be deleted.
+
  class EditReview extends Component {
      constructor(props){
          super(props);
 
          this.state = {
+             //variables that the changed ratings and review text will be inputted into
             overallRating: null,
             priceRating: null,
             qualityRating: null,
@@ -17,7 +21,9 @@ import { AirbnbRating } from 'react-native-ratings';
      }
 
      editReview = async () => {
+         //this function uses a patch request to change the details of a chosen review, for a chosen location
         const to_send = {
+            //request sent to server includes all the ratings that are passed as integers, as well as the text review
             overallRating: parseInt(this.state.overall_rating),
             priceRating: parseInt(this.state.price_rating),
             qualityRating: parseInt(this.state.quality_rating),
@@ -25,6 +31,7 @@ import { AirbnbRating } from 'react-native-ratings';
             reviewBody: this.state.review_body
         }
 
+        //Get the session token. Also get the location id and review id for the specified review that have been passed from the view reviews page.
         const value = await AsyncStorage.getItem('@session_token');
         const location_id = this.state.location_id;
         const review_id = this.state.review_id;
@@ -60,7 +67,10 @@ import { AirbnbRating } from 'react-native-ratings';
     }
 
     deleteReview = async () => {
+        //This function uses a delete request to remove a specific review for a specific location from the list of reviews
+        //made by a user, then navigates to the view reviews page
         const to_send = {
+            //request sent to server includes all the ratings that are passed as integers, as well as the text review
             overallRating: parseInt(this.state.overall_rating),
             priceRating: parseInt(this.state.price_rating),
             qualityRating: parseInt(this.state.quality_rating),
@@ -108,13 +118,13 @@ import { AirbnbRating } from 'react-native-ratings';
         return(
             <ScrollView style={styles.container}>
                    <Text style={styles.header}>Update a review</Text>
-
+                   {/* User input for each of the ratings in the form of air bnb rating stars, followed by the text input for the review.
+                   The values are editted, which assigns the new value to the variables. */}
                    <View style={styles.review}>
                        <Text style={styles.title}>Overall rating</Text>
                        <AirbnbRating
-                       selectedColor={'#FFD700'}
+                       selectedColor={'#FFD700'} //gold
                        size={20}
-                       //defaultRating={this.props.route.params.item.review.overall_rating}
                        onFinishRating={(overallRating) => this.setState({overallRating})}
                        value={this.state.overallRating}
                        />
@@ -125,7 +135,6 @@ import { AirbnbRating } from 'react-native-ratings';
                        <AirbnbRating
                        selectedColor={'#FFD700'}
                        size={20}
-                       //defaultRating={this.props.route.params.item.review.price_rating}
                        onFinishRating={(priceRating) => this.setState({priceRating})}
                        value={this.state.priceRating}
                        />
@@ -136,7 +145,6 @@ import { AirbnbRating } from 'react-native-ratings';
                        <AirbnbRating
                        selectedColor={'#FFD700'}
                        size={20}
-                       //defaultRating={this.props.route.params.item.review.quality_rating}
                        onFinishRating={(qualityRating) => this.setState({qualityRating})}
                        value={this.state.qualityRating}
                        />
@@ -147,7 +155,6 @@ import { AirbnbRating } from 'react-native-ratings';
                        <AirbnbRating
                        selectedColor={'#FFD700'}
                        size={20}
-                       //defaultRating={this.props.route.params.item.review.clenliness_rating}
                        onFinishRating={(clenlinessRating) => this.setState({clenlinessRating})}
                        value={this.state.clenlinessRating}
                        />
@@ -165,6 +172,7 @@ import { AirbnbRating } from 'react-native-ratings';
                    </View>
 
                    <TouchableOpacity
+                   //button calls edit review function and navigates to the view reviews page
                    style={styles.formTouch}
                    onPress={() => {this.editReview()}}
                    >
@@ -173,6 +181,7 @@ import { AirbnbRating } from 'react-native-ratings';
 
                    <View style={styles.formItem}>
                         <TouchableOpacity
+                        //button calls the delete review function and naviagtes to view reviews page
                         style={styles.formCancelTouch}
                         onPress={() => this.deleteReview()}
                         >
@@ -182,6 +191,7 @@ import { AirbnbRating } from 'react-native-ratings';
 
                    <View style={styles.formItem}>
                     <TouchableOpacity
+                    //cancel button navigates back to the view reviews page without having to edit any data
                     style={styles.formCancelTouch}
                     onPress={() => this.props.navigation.navigate("ViewReviews")}
                     >

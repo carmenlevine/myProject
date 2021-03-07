@@ -3,20 +3,25 @@ import {View, Text, TouchableOpacity, ToastAndroid, StyleSheet} from 'react-nati
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+//This page forms the log in page where the user can input their account detais and log into the application by creating a session token
+//This page is the one that is presented when the application is started.
+
 class LoginPage extends Component {
  
     constructor(props){
         super(props);
 
         this.state = {
+          //variables where the values that the user inputs will be assigned to
             email: "bob@gmail.com", 
             password: "Hello123"
         }
     }
 
     login = async () => {
-
+      //this function uses a post request to send the inputted details from the user to the server in order to log into the application
       const to_send = {
+        //assigns the inputted values to the values that the server recognises
         "first_name":this.state.firstName,
         "last_name":this.state.lastName,
         "email":this.state.email,
@@ -28,7 +33,7 @@ class LoginPage extends Component {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(to_send),
+            body: JSON.stringify(to_send), //sends the user inputted values to the server in the body of the request
         })
         .then((response) => {
             if(response.status === 200){
@@ -40,6 +45,8 @@ class LoginPage extends Component {
             }
         })
         .then(async (responseJson) => {
+          //assign the session token and id of the user using async storage so these can be used to carry out other functions throughout the app
+          //and confirm that the user is logged in. Navigate to the home page, which includes the draw nav.
             console.log(responseJson);
              await AsyncStorage.setItem('@session_token', responseJson.token);
              await AsyncStorage.setItem('@id', responseJson.id.toString());
@@ -52,7 +59,7 @@ class LoginPage extends Component {
         
     }
 
-    //validation
+    //validation to ensure that both the fields are filled in
     Emptyfields(){
         if(this.state.password=="" || this.state.email=="")
         {
@@ -62,10 +69,6 @@ class LoginPage extends Component {
         }
       }
 
-    // validateEmail(){
-    //   return !this.state.email.includes('@');
-    // }
-
     render (){
       const navigation = this.props.navigation;
 
@@ -73,7 +76,7 @@ class LoginPage extends Component {
             <View>
             <ScrollView>
             <Text style={styles.title}>Log in</Text>
-
+            {/* when the user inputs their details, it assigns them to the values already initiated*/}
             <View style={styles.formItem}>
             <TextInput
             placeholder= "Enter your email..."
@@ -95,6 +98,7 @@ class LoginPage extends Component {
 
             <View style={styles.formItem}>
             <TouchableOpacity
+            //Button calls the log in function when pressed and logs into navigate towards the homepage
                 style={styles.formTouch}
                 onPress={() => this.login()}
             >
@@ -104,6 +108,7 @@ class LoginPage extends Component {
 
             <View style={styles.formItem}>
               <TouchableOpacity
+              //button that navigates to the create an account page so a new user can create an account if they dont already have one.
               style={styles.formTouch}
               onPress={() => this.props.navigation.navigate('CreateAccount')}
               >

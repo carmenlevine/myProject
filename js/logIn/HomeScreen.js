@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
-import {View, StyleSheet, ToastAndroid, ScrollView, Text, TextInput, Button, Alert, TouchableOpacity} from 'react-native';
+import { StyleSheet, ScrollView, Text, } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FlatList } from 'react-native-gesture-handler';
+
+//This page forms the home page that is seen once the user logs into the application.
+//It is also used for the app to navigate back to after performing some of the functions.
 
 class HomeScreen extends Component{
   constructor(props){
     super(props);
   }
 
+  //Ensures that the user has logged in. If there is no session token, it will navigate the user back to the log in screen
   componentDidMount(){
     this.unsubscribe = this.props.navigation.addListener('focus',() => {
       this.checkLoggedIn();
@@ -27,6 +30,7 @@ class HomeScreen extends Component{
 
 
   render(){
+    //Prints a simple welcome message
 
     const navigation = this.props.navigation;
 

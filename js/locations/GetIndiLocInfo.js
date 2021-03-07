@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, FlatList, StyleSheet, ToastAndroid } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+//This page retrieves all the reviews for a specific location which was chosen on the Locations.js page.
+//This includes reviews made by all users, not just the user logged in.
+
 class GetIndiLocInfo extends Component {
     constructor(props){
         super(props);
 
         this.state = {
-            locationData: [],
-            isLiked: false
+            locationData: [], //the information retrieved from the request will be stored here
+            isLiked: false //value to set liked and unlike for reviews
         }
     }
 
@@ -17,7 +20,7 @@ class GetIndiLocInfo extends Component {
             this.checkLoggedIn();
         });
 
-        this.getIndiLocationInfo();
+        this.getIndiLocationInfo(); //if logged in, perform the get info request
     }
 
     componentWillUnmount(){
@@ -27,11 +30,12 @@ class GetIndiLocInfo extends Component {
     checkLoggedIn = async () => {
         const value = await AsyncStorage.getItem('@session_token');
         if (value == null){
-            this.props.navigation.navigate('Login');
+            this.props.navigation.navigate('Login'); //navigates to log in screen if the user is not logged in
         }
     }
 
     getIndiLocationInfo = async () => {
+        //this get request retieves all the information for a specific location using the location ID
         const value = await AsyncStorage.getItem('@session_token');
         const location_id = this.props.route.params.location_id;
         console.log(location_id);
@@ -58,7 +62,7 @@ class GetIndiLocInfo extends Component {
         .then((responseJson) => {
             console.log(responseJson);
             this.setState({
-                locationData: responseJson,
+                locationData: responseJson, //stores the response in the locationdata variable, all info regarding specific location
             });
         })
         .catch((error) => {
@@ -67,6 +71,7 @@ class GetIndiLocInfo extends Component {
     }
 
     likeReview = async (review_id) => {
+        //this function uses a post request to add a like to a specific review for a specific location
         const value = await AsyncStorage.getItem('@session_token');
         const location_id = this.props.route.params.location_id;
 
@@ -79,7 +84,7 @@ class GetIndiLocInfo extends Component {
         })
         .then((response) => {
             if (response.status === 200){
-                this.setState({ isLiked: true });
+                this.setState({ isLiked: true }); //sets liked value to true so that the like will show as 1 more than before
                 ToastAndroid.show("Review liked", ToastAndroid.SHORT);
                 return response.json();
             } else if (response.status === 401){
@@ -97,6 +102,7 @@ class GetIndiLocInfo extends Component {
     }
 
     unlikeReview = async (review_id) => {
+        //this function uses a delete request to remove a like from a specific review for a specific location
         const value = await AsyncStorage.getItem('@session_token');
         const location_id = this.props.route.params.location_id;
 
@@ -109,7 +115,7 @@ class GetIndiLocInfo extends Component {
         })
         .then((response) => {
             if (response.status === 200){
-                this.setState({ isLiked: false });
+                this.setState({ isLiked: false }); //sets liked value to false so that the like will show as 1 less than before
                 ToastAndroid.show("Review unliked", ToastAndroid.SHORT);
                 return response.json();
             } else if (response.status === 401){
@@ -136,6 +142,8 @@ class GetIndiLocInfo extends Component {
                 <Text style={styles.header}>Location Information</Text>
                 </View>
 
+                {/* this flatlist shows each review in an item, by printing all the values,
+                including the review body and all ratings, as well as the number of likes the review has recieved.*/}
                 <FlatList 
                 data={this.state.locationData.location_reviews}
                 renderItem={({item}) => (
@@ -146,21 +154,13 @@ class GetIndiLocInfo extends Component {
                         <Text>Quality rating: {item.quality_rating}</Text>
                         <Text>Cleanliness rating: {item.clenliness_rating}</Text>
                         <Text>Likes: {item.likes}</Text>
-                        <TouchableOpacity 
-                        //style={styles.like}
-                        title='Like'
-                        onPress={() => this.likeReview()}
-                        />
-                        <TouchableOpacity 
-                        //style={styles.unlike}
-                        title='Unlike'
-                        onPress={() => this.unlikeReview()}
-                        />
                     </View>
                 )}
-                keyExtractor={(item, index) => item.review_id.toString()}
+                //use the review id to loop through the list of reviews for the location
+                keyExtractor={(item, index) => item.review_id.toString()} 
                 />
                 <View style={styles.formItem}>
+                    {/* button to move backwards to the previous page that shows all locations */}
                     <TouchableOpacity 
                     style={styles.formTouch}
                     onPress={() => this.props.navigation.navigate('GetLocations')}

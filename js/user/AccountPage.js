@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import {View, StyleSheet, Text, TouchableOpacity, ScrollView, ToastAndroid, LogBox} from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, ToastAndroid } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FlatList, TextInput } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
+
+//This page prints some of the information held regarding a user, including their sign up details and their favourite locations
 
 class Account extends Component {
     constructor(props){
@@ -9,7 +11,7 @@ class Account extends Component {
 
         this.state = {
             isLoading: true,
-            listData: [],
+            listData: [], //reponse of the request will be held in this value
         }
     }
 
@@ -33,8 +35,8 @@ class Account extends Component {
 
 
     getData = async () => {
+        //This function uses a get request to bring all the information held on the server regarding a specific user by identifying their user ID
         const id = await AsyncStorage.getItem('@id');
-        //const user_id = parseInt(id);
         const value = await AsyncStorage.getItem('@session_token');
 
         console.log(id, value);
@@ -64,7 +66,7 @@ class Account extends Component {
             console.log(responseJson);
                 this.setState({
                     isLoading: false,
-                    listData: responseJson,
+                    listData: responseJson, //add response to the listData variable for storage
                 });
         })
         .catch((error) => {
@@ -78,13 +80,15 @@ class Account extends Component {
                 <View style={styles.formItem}>
                 <ScrollView>
                     <Text style={styles.AccTitle}>My Account</Text> 
-                    {/* prints out user info */}
+                    {/* Prints out the user information, first name, last name and email address */}
                     <Text style={styles.formText}>First name: {this.state.listData.first_name}</Text>
                     <Text style={styles.formText}>Surname: {this.state.listData.last_name}</Text>
                     <Text style={styles.formText}>Email: {this.state.listData.email}</Text>
 
                     <View style={styles.formItem}>
                         <TouchableOpacity
+                        //Button links to the edit account page and passes the list data variable, which holds all the information from
+                        //the get request - all the information on the server about the user
                         style={styles.formTouch}
                         onPress={() => this.props.navigation.navigate('EditAccount', {
                             item: this.state.listData
@@ -97,6 +101,7 @@ class Account extends Component {
                     <View style={styles.formItem}>
                         <Text style={styles.AccTitle}>My favourite reviews</Text>
                         <FlatList 
+                        //Flatlist returns all the favourited locations for the user, by printing their location name and town
                         data={this.state.listData.favourite_locations}
                         renderItem={({item}) => (
                             <View style={styles.favContainer}>
@@ -104,6 +109,7 @@ class Account extends Component {
                                 <Text>{item.location_town}</Text>
                             </View>
                         )}
+                        //Flatlist uses the location ID to make each location unique and loop through the flatlist
                         keyExtractor={(item, index) => item.location_id.toString()}
                         />
                     </View>

@@ -2,11 +2,15 @@ import React, { Component } from 'react';
 import {View, StyleSheet, ToastAndroid, Text, TouchableOpacity} from 'react-native';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
 
+//This page allows the user to create an account on the server by inputting their details and be navigated to the log in screen in order to
+//log in to the app for use.
+
 class CreateAccountPage extends Component{
   constructor(props){
     super(props);
 
     this.state = {
+      //the values that the user inputs will be stored in these values, so they can be used and passed to other pages and functions
       firstName: '',
       lastName: '',
       email: '',
@@ -16,8 +20,9 @@ class CreateAccountPage extends Component{
 }
 
 signUp = () => {
-
+//this function uses a post request to send all the inputted values to the server, so that an account can be created on the server
     const to_send = {
+      //assigns the inputted values to the values that the server recognises
       first_name:this.state.firstName,
       last_name:this.state.lastName,
       email:this.state.email,
@@ -29,7 +34,7 @@ signUp = () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(to_send)
+      body: JSON.stringify(to_send) //send the values to the server in the body of the request
     })
     .then((response) => {
       if(response.status === 201){
@@ -41,7 +46,8 @@ signUp = () => {
       }
     })
       .then((responseJson) => {
-        console.log("User created with ID: ", responseJson);
+        //prints user id to the console and navigates to the log in screen so user can log into the system
+        console.log("User created with ID: ", responseJson); 
         ToastAndroid.show("Account created", ToastAndroid.SHORT);
         this.props.navigation.navigate("Login");
       })
@@ -51,7 +57,7 @@ signUp = () => {
       })
     }
 
-    //validation
+    //validation to ensure the email field is left not empty
     Emptyfields(){
       if(this.state.email=="")
       {
@@ -61,6 +67,7 @@ signUp = () => {
       }
     }
 
+    //validation to ensure the password and confirm passwords are identical
     PasswordCheck(){
       if(this.state.password == this.state.confirmPass){
         this.setState({PasswordError:""});
@@ -77,7 +84,7 @@ signUp = () => {
       <View>
         <ScrollView>
           <Text style={styles.title}>Create an account</Text>
-
+          {/* when the user inputs text into the following fields, it will be assigned to the value of that field to create an account with*/}
           <View style ={styles.formItem}>
             <Text style={styles.formLabel}>First Name:</Text>
             <TextInput
@@ -132,6 +139,7 @@ signUp = () => {
 
           <View style={styles.formItem}>
             <TouchableOpacity
+            //button that when pressed calls the sign up function so an account is created and the user is navigated to the log in screen
             style={styles.formTouch}
             onPress={() => this.signUp()}
             >
@@ -141,6 +149,7 @@ signUp = () => {
 
           <View style={styles.formItem}>
             <TouchableOpacity
+            //button so it is possible to go back to the login screen without creating a new account
             style={styles.formTouch}
             onPress={()=>this.props.navigation.navigate("Login")}
             >

@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {View, StyleSheet, ScrollView, Text, TextInput, Button, Alert, TouchableOpacity, ToastAndroid} from 'react-native';
+import {View, StyleSheet, ScrollView, Text, TextInput, TouchableOpacity, ToastAndroid} from 'react-native';
+
+//This page links from the account page, and allows the user to edit the sign up details of their account on the server
 
 class EditAccountPage extends Component {
     constructor(props){
         super(props);
 
         this.state = {
+          //assigns the first 3 variables with those of the user, password and confrim pass will not show. These variables can be changed
+          //upon the input of the user
           firstName: this.props.route.params.item.first_name,
           lastName: this.props.route.params.item.last_name,
           email: this.props.route.params.item.email,
@@ -16,7 +20,10 @@ class EditAccountPage extends Component {
     }
 
     updateAccount = async () => {
+      //This function uses a patch request to edit the details of the user by reassigning the variables of the sign up details,
+      //and will then navigate back to the account page.
         const to_send = {
+          //information sent to the server, which includes all the details inputted by the user on this page
             first_name: this.state.firstName,
             last_name: this.state.lastName,
             email: this.state.email,
@@ -58,7 +65,7 @@ class EditAccountPage extends Component {
         })
     }
 
-    //validation
+    //validation to ensure that the email field is filled in
     Emptyfields(){
       if(this.state.email==""){
         this.setState({EmptyError:"Please fill in email field"});
@@ -67,6 +74,7 @@ class EditAccountPage extends Component {
       }
     }
 
+    //Validation to ensure that the password and confirm passwords are identical
     PasswordCheck(){
       if (this.state.password == this.state.confirmPass){
         this.setState({PasswordError:""});
@@ -82,6 +90,8 @@ class EditAccountPage extends Component {
           <View style={styles.container}>
             <ScrollView>
             <Text style={styles.title}>Update account</Text>
+
+            {/* For each of the following values, the user input will reassign the details of the users account*/}
 
             <View style ={styles.formItem}>
             <Text style={styles.formLabel}>First Name:</Text>
@@ -137,6 +147,7 @@ class EditAccountPage extends Component {
 
           <View style={styles.formItem}>
             <TouchableOpacity
+            //Buttons calls the update account function, pulling all the text the user has inputted into the fields
             style={styles.formTouch}
             onPress={() => this.updateAccount()}
             >
@@ -146,6 +157,7 @@ class EditAccountPage extends Component {
 
           <View style={styles.formItem}>
             <TouchableOpacity
+            //Button navigates back to the account page and cancels any changes that the user has inputted
             style={styles.formCancelTouch}
             onPress={() => this.props.navigation.navigate("Account")}
             >

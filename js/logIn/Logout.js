@@ -2,9 +2,12 @@ import React, { Component } from 'react';
 import {ToastAndroid, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+//This page forms the logout page where the user can log out of their account and return to the log in page
+
 class LogoutPage extends Component {
 
     logout = async () => {
+        //this function uses a post request to log out of the app and navigate the user to the log in screen
         let value = await AsyncStorage.getItem('@session_token');
         await AsyncStorage.removeItem('@session_token');
 
@@ -12,7 +15,7 @@ class LogoutPage extends Component {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Authorization': value,
+                'X-Authorization': value, //authorised using the session token from async storage
             }
         })
         .then((response) => {
@@ -39,6 +42,7 @@ class LogoutPage extends Component {
 
                 <View style={styles.formItem}>
                     <TouchableOpacity
+                    //button that calls the log out function on press to navigate to the log in screen
                     style={styles.formTouch}
                     onPress={() => this.logout()}
                     >
