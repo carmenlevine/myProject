@@ -24,11 +24,10 @@ class EditAccountPage extends Component {
           }
 
           const id = await AsyncStorage.getItem('@id');
-          const user_id = parseInt(id);
           const value = await AsyncStorage.getItem('@session_token');
-          console.log(user_id, value, to_send);
+          console.log(id, value, to_send);
 
-          return fetch("http://10.0.2.2:3333/api/1.0.0/user/" + user_id, {
+          return fetch("http://10.0.2.2:3333/api/1.0.0/user/" + id, {
             
               method: 'patch', 
               headers: {

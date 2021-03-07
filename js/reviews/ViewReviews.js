@@ -60,7 +60,6 @@ class ViewReviews extends Component {
             }
         })
         .then((responseJson) => {
-            console.log(responseJson.reviews);
             this.setState({
                 listData: responseJson.reviews
             });
@@ -193,7 +192,7 @@ class ViewReviews extends Component {
                             review_id: item.review.review_id
                         })
                     }}>
-                            <Text style={styles.formLikeText}>Set state</Text>
+                            <Text style={styles.formLikeText}>Like review</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -214,11 +213,13 @@ class ViewReviews extends Component {
                     <View style={styles.formItem}>
                         <TouchableOpacity
                         style={styles.formTouch}
-                        onPress={() => this.props.navigation.navigate('EditReview', {
-                            location_id: item.location.location_id, 
-                            review_id: item.review.review_id
-                        })}
-                        >
+                        onPress={() => {
+                            this.setState({
+                                location_id: item.location.location_id,
+                                review_id: item.review.review_id
+                            })
+                            this.props.navigation.navigate('EditReview')
+                        }}>
                             <Text style={styles.formTouchText}>Edit Review</Text>
                         </TouchableOpacity>
 

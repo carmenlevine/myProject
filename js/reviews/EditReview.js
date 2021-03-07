@@ -26,8 +26,10 @@ import { AirbnbRating } from 'react-native-ratings';
         }
 
         const value = await AsyncStorage.getItem('@session_token');
-        const location_id = this.props.route.params.location_id;
-        const review_id = this.props.route.params.review_id;
+        const location_id = this.state.location_id;
+        const review_id = this.state.review_id;
+        
+        console.log(review_id, location_id);
 
         return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + "/review/" + review_id, {
             method: 'patch',
@@ -67,8 +69,10 @@ import { AirbnbRating } from 'react-native-ratings';
         }
 
         const value = await AsyncStorage.getItem('@session_token');
-        const location_id = this.props.route.params.review_id;
-        const review_id = this.props.route.params.review_id;
+        const location_id = this.state.location_id;
+        const review_id = this.state.review_id;
+        
+        console.log(review_id, location_id);
 
         return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
             method: 'delete',
@@ -110,7 +114,7 @@ import { AirbnbRating } from 'react-native-ratings';
                        <AirbnbRating
                        selectedColor={'#FFD700'}
                        size={20}
-                       defaultRating={this.props.route.params.item.review.overall_rating}
+                       //defaultRating={this.props.route.params.item.review.overall_rating}
                        onFinishRating={(overallRating) => this.setState({overallRating})}
                        value={this.state.overallRating}
                        />
@@ -121,7 +125,7 @@ import { AirbnbRating } from 'react-native-ratings';
                        <AirbnbRating
                        selectedColor={'#FFD700'}
                        size={20}
-                       defaultRating={this.props.route.params.item.review.price_rating}
+                       //defaultRating={this.props.route.params.item.review.price_rating}
                        onFinishRating={(priceRating) => this.setState({priceRating})}
                        value={this.state.priceRating}
                        />
@@ -132,7 +136,7 @@ import { AirbnbRating } from 'react-native-ratings';
                        <AirbnbRating
                        selectedColor={'#FFD700'}
                        size={20}
-                       defaultRating={this.props.route.params.item.review.quality_rating}
+                       //defaultRating={this.props.route.params.item.review.quality_rating}
                        onFinishRating={(qualityRating) => this.setState({qualityRating})}
                        value={this.state.qualityRating}
                        />
@@ -143,7 +147,7 @@ import { AirbnbRating } from 'react-native-ratings';
                        <AirbnbRating
                        selectedColor={'#FFD700'}
                        size={20}
-                       defaultRating={this.props.route.params.item.review.clenliness_rating}
+                       //defaultRating={this.props.route.params.item.review.clenliness_rating}
                        onFinishRating={(clenlinessRating) => this.setState({clenlinessRating})}
                        value={this.state.clenlinessRating}
                        />
