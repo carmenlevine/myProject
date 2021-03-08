@@ -21,7 +21,8 @@ import { AirbnbRating } from 'react-native-ratings';
      }
 
      editReview = async () => {
-         //this function uses a patch request to change the details of a chosen review, for a chosen location
+        //This function uses a delete request to remove a specific review for a specific location from the list of reviews
+        //made by a user, then navigates to the view reviews page
         const to_send = {
             //request sent to server includes all the ratings that are passed as integers, as well as the text review
             overallRating: parseInt(this.state.overall_rating),
@@ -31,14 +32,13 @@ import { AirbnbRating } from 'react-native-ratings';
             reviewBody: this.state.review_body
         }
 
-        //Get the session token. Also get the location id and review id for the specified review that have been passed from the view reviews page.
         const value = await AsyncStorage.getItem('@session_token');
-        const location_id = this.state.location_id;
-        const review_id = this.state.review_id;
+        const location_id = this.props.route.params.location_id;
+        const review_id = this.props.route.params.review_id;
         
         console.log(review_id, location_id);
 
-        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + "/review/" + review_id, {
+        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + '/review/' + review_id, {
             method: 'patch',
             headers: {
                 'Content-Type': 'application/json',
@@ -79,8 +79,8 @@ import { AirbnbRating } from 'react-native-ratings';
         }
 
         const value = await AsyncStorage.getItem('@session_token');
-        const location_id = this.state.location_id;
-        const review_id = this.state.review_id;
+        const location_id = this.props.route.params.location_id;
+        const review_id = this.props.route.params.review_id;
         
         console.log(review_id, location_id);
 

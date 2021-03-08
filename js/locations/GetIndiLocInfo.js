@@ -70,68 +70,6 @@ class GetIndiLocInfo extends Component {
         });
     }
 
-    likeReview = async (review_id) => {
-        //this function uses a post request to add a like to a specific review for a specific location
-        const value = await AsyncStorage.getItem('@session_token');
-        const location_id = this.props.route.params.location_id;
-
-        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + "/review/" + review_id + "/like", {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Authorization': value
-            },
-        })
-        .then((response) => {
-            if (response.status === 200){
-                this.setState({ isLiked: true }); //sets liked value to true so that the like will show as 1 more than before
-                ToastAndroid.show("Review liked", ToastAndroid.SHORT);
-                return response.json();
-            } else if (response.status === 401){
-                ToastAndroid.show('You are not logged in', ToastAndroid.SHORT);
-                this.props.navigation.navigate('Login');
-            } else if (response.status === 404){
-                throw 'Not found';
-            } else {
-                throw 'Something went wrong';
-            }
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    }
-
-    unlikeReview = async (review_id) => {
-        //this function uses a delete request to remove a like from a specific review for a specific location
-        const value = await AsyncStorage.getItem('@session_token');
-        const location_id = this.props.route.params.location_id;
-
-        return fetch("http://10.0.2.2:3333/api/1.0.0/location/" + location_id + "/review/" + review_id + "/like", {
-            method: 'delete',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Authorization': value
-            },
-        })
-        .then((response) => {
-            if (response.status === 200){
-                this.setState({ isLiked: false }); //sets liked value to false so that the like will show as 1 less than before
-                ToastAndroid.show("Review unliked", ToastAndroid.SHORT);
-                return response.json();
-            } else if (response.status === 401){
-                ToastAndroid.show('You are not logged in', ToastAndroid.SHORT);
-                this.props.navigation.navigate('Login');
-            } else if (response.status === 404){
-                throw 'Not found';
-            } else {
-                throw 'Something went wrong';
-            }
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    }
-
     render(){
 
         const navigation = this.props.navigation;
@@ -159,6 +97,7 @@ class GetIndiLocInfo extends Component {
                 //use the review id to loop through the list of reviews for the location
                 keyExtractor={(item, index) => item.review_id.toString()} 
                 />
+
                 <View style={styles.formItem}>
                     {/* button to move backwards to the previous page that shows all locations */}
                     <TouchableOpacity 

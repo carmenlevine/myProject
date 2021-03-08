@@ -227,13 +227,12 @@ class ViewReviews extends Component {
                         <TouchableOpacity
                         //button assigns the values of location and review id, then navigates the user to the edit review page
                         style={styles.formTouch}
-                        onPress={() => {
-                            this.setState({
+                        onPress={() =>
+                            this.props.navigation.navigate('EditReview', {
                                 location_id: item.location.location_id,
                                 review_id: item.review.review_id
                             })
-                            this.props.navigation.navigate('EditReview')
-                        }}>
+                        }>
                             <Text style={styles.formTouchText}>Edit Review</Text>
                         </TouchableOpacity>
 

@@ -135,7 +135,7 @@ class Locations extends Component{
         return(
             <View>
                 <View style={styles.formItem}>
-                    <Text style={styles.formTitle}>Coffee Locations</Text>
+                    <Text style={styles.formHeader}>Coffee Locations</Text>
                 </View>
                 <FlatList 
                 //flatlist prints all the data regarding each specific location and each button as
@@ -195,8 +195,12 @@ const styles = StyleSheet.create({
         padding: 20
     },
     formTitle: {
-       fontSize: 30,
+       fontSize: 25,
        fontWeight: 'bold'
+    },
+    formHeader: {
+        fontSize: 34,
+        fontWeight: 'bold',
     },
     formTouch: {
         backgroundColor: 'lightblue',

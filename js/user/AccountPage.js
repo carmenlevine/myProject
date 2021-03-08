@@ -165,7 +165,10 @@ const styles = StyleSheet.create({
     favContainer: {
         alignContent: 'center',
         justifyContent: 'center',
-        padding: 8
+        padding: 10,
+        borderWidth: 1,
+        borderColor: 'lightblue',
+    borderRadius:5
     }
 });
 
