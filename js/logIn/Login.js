@@ -13,8 +13,8 @@ class LoginPage extends Component {
 
         this.state = {
           //variables where the values that the user inputs will be assigned to
-            email: "bob@gmail.com", 
-            password: "Hello123"
+            email: "", 
+            password: ""
         }
     }
 

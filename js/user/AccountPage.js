@@ -99,7 +99,7 @@ class Account extends Component {
                     </View>
 
                     <View style={styles.formItem}>
-                        <Text style={styles.AccTitle}>My favourite reviews</Text>
+                        <Text style={styles.AccTitle}>My favourite locations</Text>
                         <FlatList 
                         //Flatlist returns all the favourited locations for the user, by printing their location name and town
                         data={this.state.listData.favourite_locations}

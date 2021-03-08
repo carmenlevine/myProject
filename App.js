@@ -1,9 +1,9 @@
-import 'react-native-gesture-handler';
- 
+import 'react-native-gesture-handler';    
+      
 import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native'; 
 import { createStackNavigator } from '@react-navigation/stack';
-
+ 
 import CreateAccount from './js/logIn/CreateAccount';
 import Login from "./js/logIn/Login";   
 import DrawNav from './js/navigation/DrawNavigator';
@@ -12,10 +12,10 @@ import DrawNav from './js/navigation/DrawNavigator';
 // a stack navigator. When logged in, the log in function will navigate to the Draw Nav function, whose primary page is the homepage.
  
 const Stack = createStackNavigator();
-
+  
 class App extends Component {  
-  render(){ 
-    return (
+  render(){  
+    return ( 
       <NavigationContainer>  
         <Stack.Navigator
         //Header is not shown and the log in page is presented as the first page when opening the application, because it is possible to 
@@ -32,5 +32,5 @@ class App extends Component {
   }     
 }     
   
- export default App;
+ export default App; 
   
